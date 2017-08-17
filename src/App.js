@@ -6,10 +6,11 @@ import { ReactRouter, BrowserRouter as Router, Route, Link, NavLink, Redirect } 
 
 
 import NavigationBar from './NavigationBar.js';
-import SignupForm from './forms/SignupForm.js'
-import LoginForm from './forms/LoginForm.js'
+import SignupForm from './forms/SignupForm.js';
+import LoginForm from './forms/LoginForm.js';
 
-import AdminPanel from './AdminPanel.js'
+import AdminPanel from './AdminPanel.js';
+import AuthorizationErrorPage from './AuthorizationErrorPage.js';
 
 
 class App extends Component {
@@ -30,8 +31,10 @@ class App extends Component {
             <Route path="/admin" render={() => (
               localStorage.administrator ?
                 <AdminPanel />:
-                <Redirect to="/login" />
-            )} /> 
+                <AuthorizationErrorPage />
+            )}> 
+              <Route path="/structures" component={SignupForm} />
+            </Route> 
             <Route path="/signup" component={SignupForm} />
             <Route path="/login" component={LoginForm} />
           </div> 

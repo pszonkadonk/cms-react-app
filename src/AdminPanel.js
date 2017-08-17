@@ -1,18 +1,19 @@
 import React, { Component } from 'react';
+import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
 import axios from 'axios';
-import $ from 'jquery'
+import $ from 'jquery';
 
-class AdminPanel extends Component {
-    constructor(props) {
-        super(props)        
-    }
-
-    render() {
-        return (
-            <h1>Admin Panel</h1>
-        );
-    }
-};
+import StructureList from './StructureList.js';
+import Structure from './Structure.js';
+import AdminRoutes from './AdminRoutes.js'
 
 
-export default AdminPanel
+const AdminPanel = () => {
+    return (
+    <div className="container">
+        <AdminRoutes />
+    </div>
+    );            
+}
+
+export default AdminPanel;

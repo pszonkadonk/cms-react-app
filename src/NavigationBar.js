@@ -36,18 +36,6 @@ const NavigationBar = (props) => {
                         </div>  
                     </div>  
                 </nav>
-
-            /*<Navbar>
-                <Navbar.Header>
-                <Navbar.Brand>
-                    <a href="#">CMS-APP</a>
-                </Navbar.Brand>
-                </Navbar.Header>
-                <Nav>
-                <NavItem eventKey={1} href="#">Signup</NavItem>
-                <NavItem eventKey={2} href="#">Login</NavItem>
-                </Nav>
-            </Navbar>*/
         )
     }
 
