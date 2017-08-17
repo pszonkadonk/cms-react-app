@@ -8,8 +8,7 @@ import LoginForm from './forms/LoginForm.js'
 
 // import {Navbar, Nav, NavItem, NavDropdown, MenuItem  } from 'react-bootstrap';
 
-class NavigationBar extends Component {
-    render() {
+const NavigationBar = (props) => {
         return( 
                 <nav className="navbar navbar-default">
                     <div className="container-fluid">
@@ -30,6 +29,9 @@ class NavigationBar extends Component {
                                 <li>
                                     <NavLink activeClassName="active" to="/login">Log In</NavLink>
                                 </li>
+                                <li>
+                                    <NavLink activeClassName="active" to="/admin">Admin Panel</NavLink>
+                                </li>
                             </ul>
                         </div>  
                     </div>  
@@ -48,6 +50,5 @@ class NavigationBar extends Component {
             </Navbar>*/
         )
     }
-}
 
 export default NavigationBar

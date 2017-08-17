@@ -1,7 +1,13 @@
 import React, { Component } from 'react';
+import $ from 'jquery';
+import axios from 'axios';
+import setAuthorizationToken from "../utils/setAuthorizationToken.js";
+import { BrowserRouter as Router, Redirect, Route } from 'react-router-dom';
 
-import $ from 'jquery'
+import NavigationBar from '../NavigationBar.js';
+import AdminPanel from '../AdminPanel.js'
 
+import SignupForm from './SignupForm.js'
 
 class LoginForm extends Component {
     constructor(props) {
@@ -10,7 +16,8 @@ class LoginForm extends Component {
             username: "",
             password: "",
             errors: {},
-            token: ""
+            token: "",
+            loggedIn: false
         };
         this.handleUsernameChange= this.handleUsernameChange.bind(this);
         this.handlePasswordChange= this.handlePasswordChange.bind(this);
@@ -38,21 +45,38 @@ class LoginForm extends Component {
             username: this.state.username,
             password: this.state.password
         }
+        
     
 
-        $.post("/login", loginPayLoad, (response) => {
-            const token = response.token;
-            localStorage.setItem('jwtToken', token);
-            // this.setState({
-            //     token: expressResponse
-            // });
-            // alert(this.state.token);
+        axios.post("/login", loginPayLoad).then(response => {
+            // console.log("this is response");
+            // console.log(response);
+            if(response.data.returnObject) {
+                const token = response.data.returnObject.token;
+                const username = response.data.returnObject.username;
+                const administrator = response.data.returnObject.administrator;
+                localStorage.setItem('jwtToken', token);
+                localStorage.setItem('user', username);
+                localStorage.setItem('administrator', administrator);
+                setAuthorizationToken(token);
+                this.setState({
+                    loggedIn: true
+                });
+            }
+            else {
+                alert("Your username or password is invalid");
+            }            
         });
     }
 
 
     render() {
-        // const { errors, username, password, token} = this.state;
+        const { loggedIn } = this.state;
+        if(loggedIn) {
+            console.log("redirecting to admin panel");
+            return <Redirect to="/admin" />
+        }
+
         return (
             <div className="container">
                 <div className="row">

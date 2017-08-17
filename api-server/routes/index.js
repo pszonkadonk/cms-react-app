@@ -36,8 +36,14 @@ const constructorMethod = (app) => {
                 id: req.user._id,
                 username: req.user.username
             }, config.jwtSecret);
-            console.log(token);
-            res.json({token});
+            
+            let returnObject = {
+                userId: req.user._id,
+                username: req.user.username,
+                administrator: req.user.administrator,
+                token: token
+            }
+            res.json({returnObject});
     });
 }
 
