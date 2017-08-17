@@ -4,8 +4,8 @@ import axios from 'axios';
 import setAuthorizationToken from "../utils/setAuthorizationToken.js";
 import { BrowserRouter as Router, Redirect, Route } from 'react-router-dom';
 
-import NavigationBar from '../NavigationBar.js';
-import AdminPanel from '../AdminPanel.js'
+import NavigationBar from '../navigation/NavigationBar.js';
+import AdminPanel from '../admin/AdminPanel.js'
 
 import SignupForm from './SignupForm.js'
 

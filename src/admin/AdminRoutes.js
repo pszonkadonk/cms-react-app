@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { ReactRouter, BrowserRouter as Router, Route, Link, NavLink, Switch } from 'react-router-dom';
-import StructureList from './StructureList.js';
-import Structure from './Structure.js';
-import EditStructurePage from './EditStructurePage';
-import AddStructurePage from './AddStructurePage';
+import StructureList from '../structures/StructureList.js';
+import Structure from '../structures/Structure.js';
+import EditStructurePage from '../structures/EditStructurePage';
+import AddStructurePage from '../structures/AddStructurePage';
 
 
 const AdminRoutes = () => {

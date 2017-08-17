@@ -5,12 +5,12 @@ import './App.css';
 import { ReactRouter, BrowserRouter as Router, Route, Link, NavLink, Redirect } from 'react-router-dom';
 
 
-import NavigationBar from './NavigationBar.js';
+import NavigationBar from './navigation/NavigationBar.js';
 import SignupForm from './forms/SignupForm.js';
 import LoginForm from './forms/LoginForm.js';
 
-import AdminPanel from './AdminPanel.js';
-import AuthorizationErrorPage from './AuthorizationErrorPage.js';
+import AdminPanel from './admin/AdminPanel.js';
+import AuthorizationErrorPage from './error/AuthorizationErrorPage.js';
 
 
 class App extends Component {
@@ -33,7 +33,6 @@ class App extends Component {
                 <AdminPanel />:
                 <AuthorizationErrorPage />
             )}> 
-              <Route path="/structures" component={SignupForm} />
             </Route> 
             <Route path="/signup" component={SignupForm} />
             <Route path="/login" component={LoginForm} />

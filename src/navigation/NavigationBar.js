@@ -2,11 +2,9 @@ import React, { Component } from 'react';
 import { ReactRouter, BrowserRouter, Route, Link, NavLink } from 'react-router-dom';
 
 
-import SignupForm from './forms/SignupForm.js'
-import LoginForm from './forms/LoginForm.js'
+import SignupForm from '../forms/SignupForm.js'
+import LoginForm from '../forms/LoginForm.js'
 
-
-// import {Navbar, Nav, NavItem, NavDropdown, MenuItem  } from 'react-bootstrap';
 
 const NavigationBar = (props) => {
         return( 
