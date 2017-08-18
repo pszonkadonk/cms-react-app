@@ -1,6 +1,12 @@
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
+const socket = require('socket.io');
+const bluebird = require('bluebird');
+const nprSender = require('./js/nrp-sender-shim');
+const redisConnection = require("./js/redis-connection");
+const redis = require('redis');
+const client = redis.createClient();
 
 
 const passport = require("passport");
@@ -19,6 +25,8 @@ app.use(require('express-session')({ secret: 'keyboard cat', resave: false, save
 app.use(flash())
 
 
+bluebird.promisifyAll(redis.RedisClient.prototype);
+bluebird.promisifyAll(redis.Multi.prototype);
 
 
 configRoutes(app);

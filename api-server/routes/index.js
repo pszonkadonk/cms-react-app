@@ -1,11 +1,20 @@
 const express = require("express");
 const users = require('../data/users');
 const xss = require("xss");
+const bluebird = require('bluebird');
 const passport = require('passport');
 const Strategy = require('passport-local').Strategy;
 const flash = require('connect-flash');
 const jwt = require("jsonwebtoken");
 const config = require("../config");
+const redisConnection = require('../js/redis-connection');
+const nprSender = require('../js/nrp-sender-shim');
+const redis = require('redis');
+const client = redis.createClient();
+
+bluebird.promisifyAll(redis.RedisClient.prototype);
+bluebird.promisifyAll(redis.Multi.prototype);
+
 
 require('../passport-config/passport-strat.js')(passport, Strategy);
 
@@ -13,19 +22,28 @@ require('../passport-config/passport-strat.js')(passport, Strategy);
 const constructorMethod = (app) => {
 
     app.post('/register',
-        (req, res) => {
+        async (req, res) => {
             let username = xss(req.body.username);
             let password = xss(req.body.password);
             let administrator = xss(req.body.administrator);
-            users.addUser(username, password, administrator).then((registeredUser) => {
-                console.log("You reached the post user routes");
-            // res.status(200).redirect('/login?registration=true');
-            })
-            .catch((err) => { 
-                // res.status(401).render('webPages/register',
-                //          {error: err, username: username});
-                console.log(err);
-            });
+            if(administrator ==="") {
+                administrator = false;
+            }
+
+            let message = {
+                redis: redisConnection,
+                eventName: 'create-user',
+                data: {
+                    username: username,
+                    password: password,
+                    administrator: administrator
+                },
+                method: 'POST',
+                expectsResponse: true
+            }
+
+            let response = await nprSender.sendMessage(message);
+            
         });
 
 

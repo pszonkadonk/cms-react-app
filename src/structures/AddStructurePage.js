@@ -1,13 +1,9 @@
-import React, { Component } from 'react';
+/*import React, { Component } from 'react';
 
 class AddStructurePage extends Component {
     constructor(props) {
         super(props);
     }
-
-
-
-
     render() {
         return(
             <div className="container">
@@ -17,22 +13,11 @@ class AddStructurePage extends Component {
 
                     </div>
                 </div>
-            </div>
-
-
-
-
-
-
-
-
-
-
-            
+            </div> 
         );
     }
 
 
 
 
-} 
+} */

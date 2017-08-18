@@ -42,6 +42,7 @@ class SignupForm extends Component {
     }
 
     handleSubmit(event) {
+        event.preventDefault();
         if(this.state.username === '' || this.state.password === '') {
             alert("You must provide a valid username and password");
             return false;
@@ -56,8 +57,11 @@ class SignupForm extends Component {
             password: this.state.password,
             administrator: this.state.administrator
         }
-        
-        axios.post("/register", signupPayLoad);
+        axios.post("/register", signupPayLoad).then((response) => {
+            console.log("response");
+
+            console.log(response);
+        })
     }
 
     render() {

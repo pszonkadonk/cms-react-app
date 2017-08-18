@@ -59,12 +59,10 @@ let exportedMethods = {
                     };
                     return userCollection.insertOne(newUser).then((insertedInfo) => {
                         return insertedInfo.insertedId;
-                    }).then((newId) => {
-                        return this.getUserById(newId);
                     });
                 });
             });
-        });
+        })
     },
     removeUser(id) {
         if(id === '' || typeof(id) === 'undefined') {
