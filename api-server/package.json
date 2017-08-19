@@ -19,6 +19,7 @@
     "express-session": "^1.15.5",
     "flat": "^4.0.0",
     "jsonwebtoken": "^7.4.2",
+    "jwt-decode": "^2.2.0",
     "mongodb": "^2.2.31",
     "node-redis": "^0.1.7",
     "node-redis-pubsub": "^1.0.3",

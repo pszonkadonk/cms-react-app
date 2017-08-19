@@ -25,7 +25,7 @@ redisConnection.on("create-user:post:*", (message, channel) => {
     let failedEvent = `${eventName}:failed:${requestId}`;
 
 
-    console.log("You have reacted create-user:post");
+    console.log("You have reached create-user:post");
 
     let username = message.data.username;
     let password = message.data.password;
@@ -33,7 +33,8 @@ redisConnection.on("create-user:post:*", (message, channel) => {
 
     console.log(message);
     users.addUser(username, password, administrator).then((newUser) => {
-        if(newUser === undefined) {
+        console.log(newUser);
+        if(newUser !== undefined) {
             console.log("User created");
             redisConnection.emit(successEvent, {
                 requestId: requestId,
@@ -41,7 +42,7 @@ redisConnection.on("create-user:post:*", (message, channel) => {
                 eventName: eventName
             });
         } else {
-            console.log("Could not crate user");
+            console.log("Could not create user");
             let warning = "Could not create user";
             redisConnection.emit(failedEvent, {
                 requestId: requestId,
@@ -53,5 +54,43 @@ redisConnection.on("create-user:post:*", (message, channel) => {
     .catch((err) => { 
         console.log(err);
     });
-
 });
+
+redisConnection.on("fetch-users:get:*", (message, channel) => {
+    
+        let requestId = message.requestId;
+        let eventName = message.eventName;
+    
+        let successEvent = `${eventName}:success:${requestId}`;
+        let failedEvent = `${eventName}:failed:${requestId}`;
+    
+    
+        console.log("You have reached fetch-users:get");
+        
+        console.log(message);
+        users.getAllUsers().then((userCollection) => {
+            userCollection.forEach((element) => {
+                delete element._id;
+                delete element._hashedPassword;
+            });
+            if(userCollection !== undefined) {
+                console.log("getting all users");
+                redisConnection.emit(successEvent, {
+                    requestId: requestId,
+                    data: userCollection,
+                    eventName: eventName
+                });
+            } else {
+                console.log("Could not get user collection");
+                let warning = "Could not get user collection";
+                redisConnection.emit(failedEvent, {
+                    requestId: requestId,
+                    data: warning,
+                    eventName: eventName
+                });
+            }
+        })
+        .catch((err) => { 
+            console.log(err);
+        });
+    });

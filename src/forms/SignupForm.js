@@ -58,10 +58,13 @@ class SignupForm extends Component {
             administrator: this.state.administrator
         }
         axios.post("/register", signupPayLoad).then((response) => {
-            console.log("response");
 
-            console.log(response);
-        })
+            if(response !== "undefined") {
+                alert(`You have registered with the username ${response.data.username}`);
+            } else {
+                alert("There was an issue signing you up with those credentials");
+            }
+        });
     }
 
     render() {

@@ -50,7 +50,7 @@ let exportedMethods = {
                 if(user) {
                     throw (`The username ${username} is already in use`);
                 }
-                bcrpyt.hash(password, null, null, (err, hash) => {
+                var hash = bcrpyt.hashSync(password);
                     let newUser = {
                         _id: uuid.v4(),
                         username: username,
@@ -59,8 +59,9 @@ let exportedMethods = {
                     };
                     return userCollection.insertOne(newUser).then((insertedInfo) => {
                         return insertedInfo.insertedId;
+                    }).then((newId) => {
+                        return this.getUserById(newId);
                     });
-                });
             });
         })
     },

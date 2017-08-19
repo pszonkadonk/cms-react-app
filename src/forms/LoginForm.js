@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import $ from 'jquery';
 import axios from 'axios';
 import setAuthorizationToken from "../utils/setAuthorizationToken.js";
 import { BrowserRouter as Router, Redirect, Route } from 'react-router-dom';
@@ -49,8 +48,6 @@ class LoginForm extends Component {
     
 
         axios.post("/login", loginPayLoad).then(response => {
-            // console.log("this is response");
-            // console.log(response);
             if(response.data.returnObject) {
                 const token = response.data.returnObject.token;
                 const username = response.data.returnObject.username;
