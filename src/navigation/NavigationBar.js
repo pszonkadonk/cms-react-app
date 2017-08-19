@@ -6,8 +6,34 @@ import SignupForm from '../forms/SignupForm.js'
 import LoginForm from '../forms/LoginForm.js'
 
 
-const NavigationBar = (props) => {
-        return( 
+class NavigationBar extends Component {
+    constructor(props) {
+        super(props)
+        let loggedin = false;
+        if(localStorage.length === 0) {
+            loggedin = false;
+        } else {
+            loggedin = true;
+        }
+
+        this.state = {
+            loggedin: loggedin
+        };
+
+        console.log(this.state.loggedin)
+
+        this.logout = this.logout.bind(this);
+    }
+
+    logout() {
+        localStorage.clear();
+        this.setState({
+            loggedin: false
+        })
+    }
+
+        render() {
+            return( 
                 <nav className="navbar navbar-default">
                     <div className="container-fluid">
                         <div className="navbar-header">
@@ -24,17 +50,31 @@ const NavigationBar = (props) => {
                                 <li>
                                     <NavLink activeClassName="active" to="/signup">Sign Up</NavLink>
                                 </li>
+                                {this.state.loggedin ? (
                                 <li>
-                                    <NavLink activeClassName="active" to="/login">Log In</NavLink>
-                                </li>
+                                    <NavLink activeClassName="active" to="/" onClick={this.logout}>Log Out</NavLink>
+                                </li>   
+                                ): (
+                                    <li>
+                                        <NavLink activeClassName="active" to="/login">Log In</NavLink>
+                                    </li>
+                                )
+                                }
+                                {localStorage.administrator === "true" ? (
                                 <li>
                                     <NavLink activeClassName="active" to="/admin">Admin Panel</NavLink>
-                                </li>
+                                </li>   
+                                ): (
+                                    <li></li>
+                                )
+                                }
                             </ul>
                         </div>  
                     </div>  
                 </nav>
-        )
+            )
+        }
     }
 
 export default NavigationBar
+

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
+import setAuthorizationToken from "../utils/setAuthorizationToken.js";
+
 class UserList extends Component {
     constructor(props) {
         super(props)
@@ -23,6 +25,7 @@ class UserList extends Component {
     }
 
     componentDidMount() {
+        setAuthorizationToken(localStorage.jwtToken);
         this.fetchUsers();
     }
 
@@ -47,8 +50,8 @@ class UserList extends Component {
                 </thead>
                 <tbody>
                     {this.state.users.map(element =>
-                        <tr>
-                            <td>{element.username}</td>
+                        <tr key={element.key}>
+                            <td key={element.key}>{element.username}</td>
                             {element.administrator === "false" || element.administrator === false ? (
                                 <td>Not Admin</td>
                             ) : (

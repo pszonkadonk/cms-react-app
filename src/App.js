@@ -12,6 +12,7 @@ import LoginForm from './forms/LoginForm.js';
 import AdminPanel from './admin/AdminPanel.js';
 import AuthorizationErrorPage from './error/AuthorizationErrorPage.js';
 
+import styles from "./styles.css"
 
 class App extends Component {
 
@@ -21,21 +22,20 @@ class App extends Component {
     
 
   render() {
-    // const { loggedIn } = this.state;
-    // console.log(loggedIn);
     return (
       <div className="App">
         <Router>
           <div className="container">
             <NavigationBar />
             <Route path="/admin" render={() => (
-              localStorage.administrator ?
-                <AdminPanel />:
+              localStorage.administrator==="true"?
+                <AdminPanel />
+                 :
                 <AuthorizationErrorPage />
             )}> 
             </Route> 
             <Route path="/signup" component={SignupForm} />
-            <Route path="/login" component={LoginForm} />
+            <Route path="/login" render={(props) => (<LoginForm {...props} />)} />
           </div> 
         </Router>
 

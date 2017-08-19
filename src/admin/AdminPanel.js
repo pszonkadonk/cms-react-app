@@ -11,6 +11,9 @@ import AdminRoutes from '../admin/AdminRoutes.js'
 const AdminPanel = () => {
     return (
     <div className="container">
+        <div className="admin-panel">
+            <h1>Admin Panel</h1>
+        </div>
         <AdminRoutes />
     </div>
     );            

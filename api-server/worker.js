@@ -6,6 +6,7 @@ const flat = require('flat');
 const request = require('request');
 const unflatten = flat.unflatten;
 const users = require('./data/users');
+const structures = require('./data/structures');
 
 
 
@@ -71,7 +72,7 @@ redisConnection.on("fetch-users:get:*", (message, channel) => {
         users.getAllUsers().then((userCollection) => {
             userCollection.forEach((element) => {
                 delete element._id;
-                delete element._hashedPassword;
+                delete element.hashedPassword;
             });
             if(userCollection !== undefined) {
                 console.log("getting all users");
@@ -120,6 +121,45 @@ redisConnection.on("fetch-users:get:*", (message, channel) => {
                 } else {
                     console.log("Could not update User");
                     let warning = "Could not update User";
+                    redisConnection.emit(failedEvent, {
+                        requestId: requestId,
+                        data: warning,
+                        eventName: eventName
+                    });
+                }
+            })
+            .catch((err) => { 
+                console.log(err);
+            });
+        });
+
+
+    redisConnection.on("add-structure:post:*", (message, channel) => {
+        
+            let requestId = message.requestId;
+            let eventName = message.eventName;
+        
+            let successEvent = `${eventName}:success:${requestId}`;
+            let failedEvent = `${eventName}:failed:${requestId}`;
+        
+        
+            console.log("You have reached add-structure:post");
+            
+            let structureName  = message.data.structureName.structureName
+            console.log("STRUCTURE NAME");
+            console.log(structureName);
+
+            structures.addStructure(structureName, "test-slug", "test-description", 10, []).then((structure) => {
+                if(structure !== undefined) {
+                    console.log("Added Structure");
+                    redisConnection.emit(successEvent, {
+                        requestId: requestId,
+                        data: structure,
+                        eventName: eventName
+                    });
+                } else {
+                    console.log("Could not create structure");
+                    let warning = "Could not create structure";
                     redisConnection.emit(failedEvent, {
                         requestId: requestId,
                         data: warning,

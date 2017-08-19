@@ -45,20 +45,23 @@ class LoginForm extends Component {
             password: this.state.password
         }
         
-    
-
-        axios.post("/login", loginPayLoad).then(response => {
-            if(response.data.returnObject) {
-                const token = response.data.returnObject.token;
-                const username = response.data.returnObject.username;
-                const administrator = response.data.returnObject.administrator;
+        axios.post("/login", loginPayLoad).then((response) => {
+            console.log(response);
+            if(response.data !== "undefined") {
+                const token = response.data.token;
+                const administrator = response.data.administrator;
                 localStorage.setItem('jwtToken', token);
-                localStorage.setItem('user', username);
                 localStorage.setItem('administrator', administrator);
                 setAuthorizationToken(token);
-                this.setState({
-                    loggedIn: true
-                });
+                if(localStorage.administrator === "true") {
+                    console.log("redirecting to admin panel");
+                    console.log(this.props);
+                    this.props.history.push("/admin");
+                }
+                else {
+                    console.log("Redirecting to slash");
+                    this.props.history.push("/");
+                }
             }
             else {
                 alert("Your username or password is invalid");
@@ -68,12 +71,6 @@ class LoginForm extends Component {
 
 
     render() {
-        const { loggedIn } = this.state;
-        if(loggedIn) {
-            console.log("redirecting to admin panel");
-            return <Redirect to="/admin" />
-        }
-
         return (
             <div className="container">
                 <div className="row">

@@ -7,23 +7,24 @@ import AddStructurePage from '../structures/AddStructurePage';
 import UserList from '../user/UserList';
 
 
+
 const AdminRoutes = () => {
     return(
         <Router>
             <div>
-                <Switch>
-                    <Route path='/admin/structures' component={StructureList}/>
-                    <Route path='/admin/structures/:slug' component={EditStructurePage}/>
-                    <Route path='/admin/structures/new' component={AddStructurePage}/>
-                    <Route path='/admin/users' component={UserList}/>
-
-                </Switch>
-                <ul>
+                <ul className="admin-panel-routes">
                     <li><Link to='/admin/structures'>Structure</Link></li>
                     <li><Link to='/admin/structures/:slug'>Edit Structure</Link></li>
                     <li><Link to='/admin/structures/new'>Add Structure</Link></li>
                     <li><Link to='/admin/users'>User List</Link></li>
                 </ul>
+                <Switch>
+                    <Route exact path='/admin/structures/new' component={AddStructurePage}/>
+                    <Route exact path='/admin/structures/:slug' component={EditStructurePage}/>
+                    <Route path='/admin/structures' component={StructureList}/>
+                    <Route exact path='/admin/users' component={UserList}/>
+
+                </Switch>
             </div>
         </Router>
     )

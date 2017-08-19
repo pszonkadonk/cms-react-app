@@ -10,7 +10,7 @@ import "bootstrap/dist/css/bootstrap.css"
 import "bootstrap/dist/css/bootstrap-theme.css"
 
 
-setAuthorizationToken(localStorage.jwtToken);
+// setAuthorizationToken(localStorage.jwtToken);
 
 ReactDOM.render(<App />, document.getElementById('root'));
 registerServiceWorker();

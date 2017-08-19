@@ -63,18 +63,20 @@ const constructorMethod = (app) => {
             }, config.jwtSecret);
             
             let returnObject = {
-                userId: req.user._id,
-                username: req.user.username,
                 administrator: req.user.administrator,
                 token: token
             }
-            res.json({returnObject});
+            console.log("Sending")
+            console.log(returnObject);
+            res.json(returnObject);
     });
 
 
     //get user list
     app.get('/user-list', async (req, res) => {
+        console.log(req);
         let decoded = jwtDecode(req.headers.authorization);
+        console.log(decoded);
         let authenticatedUser = await users.getUserById(decoded.id);
 
         if(authenticatedUser !== "undefined" && authenticatedUser.administrator) {
@@ -92,6 +94,7 @@ const constructorMethod = (app) => {
         } 
     });
 
+    //make user an administrator
     app.put('/make-administrator', async(req, res) => {
         let decoded = jwtDecode(req.headers.authorization);
         let authenticatedUser = await users.getUserById(decoded.id);
@@ -117,13 +120,38 @@ const constructorMethod = (app) => {
         else {
             res.json({error: "Could not authenticate user"});
         } 
-
-
-
-
-
-
     });
+
+    app.post("/add-structure", async(req, res) => {
+        let decoded = jwtDecode(req.headers.authorization);
+        let authenticatedUser = await users.getUserById(decoded.id);
+
+        console.log(req.body);
+
+        let structureName = req.body
+
+        if(authenticatedUser !== "undefined" && authenticatedUser.administrator) {
+            let message = {
+                redis: redisConnection,
+                eventName: 'add-structure',
+                data: {
+                    structureName: structureName
+                },
+                method: 'POST',
+                expectsResponse: true
+            }
+            let response = await nprSender.sendMessage(message);
+            console.log("RESPONSE");
+            console.log(response);
+            res.json(response);
+        }
+        else {
+            res.json({error: "Could not authenticate user"});
+        } 
+
+
+    })
+
 
 
 
