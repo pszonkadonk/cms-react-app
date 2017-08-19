@@ -94,3 +94,40 @@ redisConnection.on("fetch-users:get:*", (message, channel) => {
             console.log(err);
         });
     });
+
+    redisConnection.on("make-admin:put:*", (message, channel) => {
+        
+            let requestId = message.requestId;
+            let eventName = message.eventName;
+        
+            let successEvent = `${eventName}:success:${requestId}`;
+            let failedEvent = `${eventName}:failed:${requestId}`;
+        
+        
+            console.log("You have reached make-admin:put");
+            
+            console.log(message);
+            let username = message.data.username;
+
+            users.updateUser(username).then((user) => {
+                if(user !== undefined) {
+                    console.log("updated User");
+                    redisConnection.emit(successEvent, {
+                        requestId: requestId,
+                        data: user,
+                        eventName: eventName
+                    });
+                } else {
+                    console.log("Could not update User");
+                    let warning = "Could not update User";
+                    redisConnection.emit(failedEvent, {
+                        requestId: requestId,
+                        data: warning,
+                        eventName: eventName
+                    });
+                }
+            })
+            .catch((err) => { 
+                console.log(err);
+            });
+        });

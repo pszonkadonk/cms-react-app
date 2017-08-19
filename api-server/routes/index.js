@@ -23,11 +23,12 @@ require('../passport-config/passport-strat.js')(passport, Strategy);
 
 const constructorMethod = (app) => {
 
+    // register user
     app.post('/register',
         async (req, res) => {
             let username = xss(req.body.username);
             let password = xss(req.body.password);
-            let administrator = xss(req.body.administrator);
+            let administrator = req.body.administrator;
             if(administrator ==="") {
                 administrator = false;
             }
@@ -51,6 +52,7 @@ const constructorMethod = (app) => {
         });
 
 
+    //log in user
     app.post('/login', passport.authenticate('local', { failureRedirect: '/', failureFlash: 'Invalid username or password.' }),
          (req, res) => {
             console.log("I've successfully logged in");
@@ -69,6 +71,8 @@ const constructorMethod = (app) => {
             res.json({returnObject});
     });
 
+
+    //get user list
     app.get('/user-list', async (req, res) => {
         let decoded = jwtDecode(req.headers.authorization);
         let authenticatedUser = await users.getUserById(decoded.id);
@@ -85,8 +89,40 @@ const constructorMethod = (app) => {
         }
         else {
             res.json({error: "Could not authenticate user"});
+        } 
+    });
+
+    app.put('/make-administrator', async(req, res) => {
+        let decoded = jwtDecode(req.headers.authorization);
+        let authenticatedUser = await users.getUserById(decoded.id);
+
+        let updatedUser = req.body.user;
+        console.log(updatedUser);
+
+        if(authenticatedUser !== "undefined" && authenticatedUser.administrator) {
+            let message = {
+                redis: redisConnection,
+                eventName: 'make-admin',
+                data: {
+                    username:updatedUser
+                },
+                method: 'PUT',
+                expectsResponse: true
+            }
+            let response = await nprSender.sendMessage(message);
+            console.log("RESPONSE");
+            console.log(response);
+            res.json(response);
         }
-        
+        else {
+            res.json({error: "Could not authenticate user"});
+        } 
+
+
+
+
+
+
     });
 
 

@@ -36,14 +36,14 @@ const sendMessage = (messageConfig = defaultMessageConfig) => {
         else if(messageConfig.method === 'POST') {
             outgoingEventName = outgoingEventName + ':post:' + messageId;
         }
-        
+        else if(messageConfig.method === 'PUT') {
+            outgoingEventName = outgoingEventName + ':put:' + messageId;
+        }        
 
 
 
         console.log("OUTGOING EVENT NAME");
         console.log(outgoingEventName);
-        // console.log("MESSAGE CONFIG");
-        // console.log(messageConfig);
 
 
         if (settings.expectsResponse) {

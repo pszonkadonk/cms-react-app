@@ -65,6 +65,13 @@ let exportedMethods = {
             });
         })
     },
+    updateUser(username) {
+        return users().then((userCollection) =>{
+            return userCollection.updateOne({username: username}, {$set: {administrator: !this.administrator}}).then(() => {
+                return this.getUserByUsername(username);
+            });
+        });
+    },
     removeUser(id) {
         if(id === '' || typeof(id) === 'undefined') {
             throw("You must provide a valid id");
