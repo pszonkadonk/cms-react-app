@@ -146,19 +146,20 @@ redisConnection.on("fetch-users:get:*", (message, channel) => {
             console.log("You have reached add-structure:post");
             
             let structureName  = message.data.structureName.structureName
-            console.log("STRUCTURE NAME");
-            console.log(structureName);
+            // console.log("STRUCTURE NAME");
+            // console.log(structureName);
 
             structures.addStructure(structureName, "test-slug", "test-description", 10, []).then((structure) => {
-                if(structure !== undefined) {
-                    console.log("Added Structure");
+                console.log("STRUCTURE");
+                console.log(structure);
+                if(structure === undefined) {
+                    let logMessage = "You have added a structure";
                     redisConnection.emit(successEvent, {
                         requestId: requestId,
-                        data: structure,
+                        data: logMessage,
                         eventName: eventName
                     });
                 } else {
-                    console.log("Could not create structure");
                     let warning = "Could not create structure";
                     redisConnection.emit(failedEvent, {
                         requestId: requestId,

@@ -26,7 +26,7 @@ class App extends Component {
       <div className="App">
         <Router>
           <div className="container">
-            <NavigationBar />
+            {/* <NavigationBar /> */}
             <Route path="/admin" render={() => (
               localStorage.administrator==="true"?
                 <AdminPanel />

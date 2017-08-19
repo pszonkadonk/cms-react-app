@@ -59,6 +59,7 @@ let exportedMethods = {
                 }
 
                 let newStructure = {
+                    _id: uuid.v4(),
                     name: name,
                     slug: slug,
                     description: description,
@@ -71,7 +72,9 @@ let exportedMethods = {
                     return this.getStructureById(newId);
                 }).then((createdStructure) => {
                     dbConnection().then(db => {
+                        let status;
                         if(db !== "undefined") {
+                            status = 1;
                             db.collection(createdStructure.name).insert({
                                 name: createdStructure.name
                             });

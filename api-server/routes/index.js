@@ -140,16 +140,18 @@ const constructorMethod = (app) => {
                 method: 'POST',
                 expectsResponse: true
             }
-            let response = await nprSender.sendMessage(message);
-            console.log("RESPONSE");
-            console.log(response);
-            res.json(response);
+
+            nprSender.sendMessage(message).then((response) => {
+                console.log("RESPONSE");
+                console.log(response);
+                res.json(response);    
+            }).catch((err) => {
+                res.json({error:"Could not add structure"});
+            });
         }
         else {
             res.json({error: "Could not authenticate user"});
         } 
-
-
     })
 
 
