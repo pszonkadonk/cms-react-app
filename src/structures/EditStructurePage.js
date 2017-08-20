@@ -146,7 +146,7 @@ class EditStructurePage extends Component {
         return(
             <div className="container">
                 <div className="row">
-                    <div className="col-md-6 col-md-offset-3">
+                    <div className="col-md-6 md-offset-3">
                         <h1>Edit Structure</h1>
                         <h2>Structure Detail</h2>
                         <form onSubmit={this.updateStructure}>
