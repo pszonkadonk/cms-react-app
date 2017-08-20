@@ -48,6 +48,9 @@ class NavigationBar extends Component {
                         <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                             <ul className="nav navbar-nav">
                                 <li>
+                                    <NavLink activeClassName="active" to="/">Home</NavLink>
+                                </li>
+                                <li>
                                     <NavLink activeClassName="active" to="/signup">Sign Up</NavLink>
                                 </li>
                                 {this.state.loggedin ? (

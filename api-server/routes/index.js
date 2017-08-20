@@ -143,10 +143,10 @@ const constructorMethod = (app) => {
 
     // get list of all structure
     app.get("/structure-list", async(req, res) => {
-        let decoded = jwtDecode(req.headers.authorization);
-        let authenticatedUser = await users.getUserById(decoded.id);
+        // let decoded = jwtDecode(req.headers.authorization);
+        // let authenticatedUser = await users.getUserById(decoded.id);
 
-        if(authenticatedUser !== "undefined" && authenticatedUser.administrator) {
+        // if(authenticatedUser !== "undefined" && authenticatedUser.administrator) {
             let message = {
                 redis: redisConnection,
                 eventName: 'structure-list',
@@ -161,9 +161,9 @@ const constructorMethod = (app) => {
             }).catch((err) => {
                 res.json({error:"Could not get structure list"});
             });
-        } else {
-            res.json({error: "Could not authenticate user"});
-        } 
+        // } else {
+        //     res.json({error: "Could not authenticate user"});
+        // } 
     });
 
     // update structure

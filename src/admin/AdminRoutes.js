@@ -13,8 +13,7 @@ const AdminRoutes = () => {
         <Router>
             <div>
                 <ul className="admin-panel-routes">
-                    <li><Link to='/admin/structures'>Structure</Link></li>
-                    <li><Link to='/admin/structures/:slug'>Edit Structure</Link></li>
+                    <li><Link to='/admin/structures'>Structure List</Link></li>
                     <li><Link to='/admin/structures/new'>Add Structure</Link></li>
                     <li><Link to='/admin/users'>User List</Link></li>
                 </ul>

@@ -12,6 +12,8 @@ import LoginForm from './forms/LoginForm.js';
 import AdminPanel from './admin/AdminPanel.js';
 import AuthorizationErrorPage from './error/AuthorizationErrorPage.js';
 
+import Home from './home/Home.js';
+
 import styles from "./styles.css"
 
 class App extends Component {
@@ -27,6 +29,7 @@ class App extends Component {
         <Router>
           <div className="container">
             <NavigationBar />
+            <Route exact path="/" component={Home} />
             <Route path="/admin" render={() => (
               localStorage.administrator==="true"?
                 <AdminPanel />

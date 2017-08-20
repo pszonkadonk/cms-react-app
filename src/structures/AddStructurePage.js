@@ -4,19 +4,6 @@ import axios from 'axios';
 import setAuthorizationToken from "../utils/setAuthorizationToken.js";
 import Structure from "./Structure"
 
-// structure components
-
-// import TextBox from './structure_components/TextBox.js'
-// import NumberTextBox from './structure_components/NumberTextBox.js'
-// import CheckBox from './structure_components/CheckBox.js'
-// import TextArea from './structure_components/TextArea.js'
-// import ImageUpload from './structure_components/ImageUpload.js'
-// import PageReference from './structure_components/TextBox.js'
-// import WysiwygEditor from './structure_components/WysiwygEditor.js'
-// import YoutubeEmbed from './structure_components/YoutubeEmbed.js'
-// import EntryReference from './structure_components/EntryReference.js'
-// import FileUpload from './structure_components/FileUpload.js'
-
 
 class AddStructurePage extends Component {
     constructor(props) {
@@ -114,6 +101,7 @@ class AddStructurePage extends Component {
             }
             else {
                 alert(`You have successfully created the ${this.state.structureName} structure!`);
+                this.props.history.push("/admin/structures")
             }
         }); 
     }
@@ -191,7 +179,7 @@ class AddStructurePage extends Component {
                                 <input type="text" className="form-control" id="structureDescription" aria-describedby="structureDescriptionHelp" placeholder="Enter Structure Description" value={this.state.structureDescription} onChange={this.handleStructureDescriptionChange} />
                             </div>
                             <div className="form-group">
-                                <label htmlFor="structurePageSize">Structure Description</label>
+                                <label htmlFor="structurePageSize">Structure Page Size</label>
                                 <input type="number" className="form-control" id="structurePageSize" aria-describedby="structurePageSizeHelp" placeholder="Enter Structure Page Size" value={this.state.structurePageSize} onChange={this.handleStructurePageSizeChange} />
                             </div>
                         <button className="btn btn-success" onClick={this.addStructure}>Add Structure</button>
