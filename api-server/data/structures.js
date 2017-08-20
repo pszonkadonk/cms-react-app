@@ -84,8 +84,8 @@ let exportedMethods = {
                         let status;
                         if(db !== "undefined") {
                             status = 1;
-                            db.collection(createdStructure.name).insert({
-                                name: createdStructure.name
+                            db.collection(`${createdStructure.slug}-entries`).insert({
+                                slug: createdStructure.slug
                             });
                         }
                     });
@@ -116,10 +116,8 @@ let exportedMethods = {
                 dbConnection().then(db => {
                     let status;
                     if(db !== "undefined") {
-                        console.log("db was defined");                        
                         status = 1;
-                        console.log(name);
-                        db.collection(name).drop((err, reply) => {
+                        db.collection(`${slug}-entries`).drop((err, reply) => {
                             if(err) {
                                 console.log(err);
                             }

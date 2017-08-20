@@ -7,6 +7,9 @@ const request = require('request');
 const unflatten = flat.unflatten;
 const users = require('./data/users');
 const structures = require('./data/structures');
+const mongoCollections = require("./config/mongoCollections");
+const dbConnection = require("./config/mongoConnection");
+
 
 
 
@@ -268,3 +271,84 @@ redisConnection.on("remove-structure:delete:*", (message, channel) => {
             console.log(err);
         });
     });
+
+redisConnection.on("structure-entries:get:*", (message, channel) => {
+    
+        let requestId = message.requestId;
+        let eventName = message.eventName;
+    
+        let successEvent = `${eventName}:success:${requestId}`;
+        let failedEvent = `${eventName}:failed:${requestId}`;
+    
+        console.log("You have reached structure-entries:get");
+
+        let slug = message.data.slug;
+
+        let entries = [];
+        dbConnection().then(db => {
+            console.log("hello")
+            if(db !== "undefined") {
+                console.log("db is defined");
+                let stream = db.collection(`${slug}-entries`).find().stream();
+                stream.on('data', (data) => {
+                    entries.push(data);
+                })
+                stream.on('end', function() {
+                    console.log('All done!')
+                    redisConnection.emit(successEvent, {
+                        requestId: requestId,
+                        data: entries,
+                        eventName: eventName
+                    });
+                });
+
+                // cursor.each((err, item) => {
+                //     if(item === null) {
+                //         db.close();
+                //         return entries;
+                //     }
+                //     entries.push(item)
+                // }).then((foo) => {
+                //     console.log("ENTRIES");
+                //     console.log(foo);
+                    // redisConnection.emit(successEvent, {
+                    //     requestId: requestId,
+                    //     data: entries,
+                    //     eventName: eventName
+                    // });
+                // });
+            } 
+            else {
+                let warning = "Could not remove structure";
+                redisConnection.emit(failedEvent, {
+                    requestId: requestId,
+                    data: warning,
+                    eventName: eventName
+                });  
+            }
+        });            
+        // structures.removeStructure(deleteSlug, deleteName).then((response) => {
+        //     if(response === null) {
+        //         let logMessage = "Structure and Entries Removed";
+        //         redisConnection.emit(successEvent, {
+        //             requestId: requestId,
+        //             data: logMessage,
+        //             eventName: eventName
+        //         });
+        //     } else {
+        //         let warning = "Could not remove structure";
+        //         redisConnection.emit(failedEvent, {
+        //             requestId: requestId,
+        //             data: warning,
+        //             eventName: eventName
+        //         });
+        //     }
+        // })
+        // .catch((err) => { 
+        //     console.log(err);
+        // });
+    });
+
+
+
+

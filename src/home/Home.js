@@ -21,7 +21,6 @@ class Home extends Component {
     }
 
     getStructureList() {
-        
         axios.get('/structure-list').then((response) => {
             if(response === "undefined" || response.data.error)  {
                 alert("Could not retrieve list of structures");
@@ -34,8 +33,6 @@ class Home extends Component {
         });
     }
 
-
-
     render() {
         return(
             <div className="container">
@@ -43,7 +40,7 @@ class Home extends Component {
                 <div className="row">
                     <div className="col-md-6 offset-md-3">
                         {this.state.structureListing.map(element =>
-                            <StructureTile key={element.key} structure={element}/>
+                            <StructureTile key={element.key} structure={element} />
                         )}
                     </div>
                 </div>

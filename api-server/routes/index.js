@@ -197,6 +197,7 @@ const constructorMethod = (app) => {
         }  
     });
 
+    // remove structure and associated entries
     app.delete("/remove-structure", async(req, res) => {
         let decoded = jwtDecode(req.headers.authorization);
         let authenticatedUser = await users.getUserById(decoded.id);
@@ -226,6 +227,25 @@ const constructorMethod = (app) => {
         }  
     });
 
+    //public route
+    app.get('/structure-entries/:slug', async(req, res) => {
+        let slug = req.params.slug;
+        
+        let message = {
+            redis: redisConnection,
+            eventName: 'structure-entries',
+            method: 'GET',
+            data: {
+                slug: slug,
+            },
+            expectsResponse: true
+        }
+        nprSender.sendMessage(message).then((response) => {
+            res.send(response);    
+        }).catch((err) => {
+            res.json({error:"Could not get entries"});
+        });
+    });
 
 
 }
