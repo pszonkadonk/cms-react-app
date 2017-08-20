@@ -24,14 +24,25 @@ class AddStructurePage extends Component {
 
         this.state = {
             structureName: "",
+            structureSlug: "",
+            structureDescription: "",
+            structurePageSize: 1,
             structureFields: [],
-            currentSelectStructure: "text-input-string"
+            currentSelectStructure: "text-input-string",
+            componentLabelName: ""
         }
 
         this.addStructure = this.addStructure.bind(this);
         this.addComponent = this.addComponent.bind(this);
         this.handleLabelChange = this.handleLabelChange.bind(this);
         this.handleComponentChange = this.handleComponentChange.bind(this);
+        this.handleStructureNameChange = this.handleStructureNameChange.bind(this);
+        this.handleStructureSlugChange = this.handleStructureSlugChange.bind(this);
+        this.handleStructureDescriptionChange = this.handleStructureDescriptionChange.bind(this);
+        this.handleStructurePageSizeChange = this.handleStructurePageSizeChange.bind(this);
+        this.isValidStructure = this.isValidStructure.bind(this);
+
+
         this.sortComponents = this.sortComponents.bind(this);
         this.removeField = this.removeField.bind(this);
     }
@@ -48,7 +59,7 @@ class AddStructurePage extends Component {
 
     handleLabelChange(event) {
         this.setState({
-            structureName: event.target.value
+            componentLabelName: event.target.value
         })
     }
 
@@ -58,18 +69,85 @@ class AddStructurePage extends Component {
         })
     }
 
+    handleStructureNameChange(event) {
+        this.setState({
+            structureName: event.target.value
+        });
+    }
+
+    handleStructureSlugChange(event) {
+        this.setState({
+            structureSlug: event.target.value
+        });
+    }
+
+    handleStructureDescriptionChange(event) {
+        this.setState({
+            structureDescription: event.target.value
+        });
+    }
+
+    handleStructurePageSizeChange(event) {
+        this.setState({
+            structurePageSize: event.target.value
+        });
+    }
+
     addStructure(event) {
-        setAuthorizationToken(localStorage.jwtToken);        
-        axios.post("/add-structure", {structureName: this.state.structureName}).then(response => {
+        event.preventDefault();
+        setAuthorizationToken(localStorage.jwtToken);
+        if(this.isValidStructure() === false) {
+            alert("There was an issue validating your form " +
+                    "please make sure all fields and filled in, and that your slug has no spaces")
+            return;
+        }
+
+        axios.post("/add-structure", {
+            structureName: this.state.structureName,
+            structureSlug: this.state.structureSlug,
+            structureDescription: this.state.structureDescription,
+            structurePageSize: this.state.structurePageSize,
+            structureFields: this.state.structureFields
+        }).then(response => {
             if(response.data.error) {
                 alert(response.data.error);
+            }
+            else {
+                alert(`You have successfully created the ${this.state.structureName} structure!`);
             }
         }); 
     }
 
+    isValidStructure() {
+        if(this.state.structureName === "undefined" || this.state.structureName === "") {
+            console.log("failed because of name");
+            return false;
+        }
+        else if(this.state.structureSlug === "undefined" || this.state.structureSlug === "") {
+            console.log("failed because of skgu");
+            return false;
+        }
+        else if(this.state.structureSlug.indexOf(" ") >=0 || this.state.structureName.indexOf(" ") >= 0) { //must have no spaces
+            console.log("failed because of slug spaces");
+            return false;
+        }
+        else if(this.state.structureDescription === "undefined" || this.state.structureDescription === "") {
+            console.log("failed because of decsription");
+            return false;
+        }
+        else if(this.state.structurePageSize === "undefined" || this.state.structurePageSize === "" || this.state.structurePageSize <= 0) {
+            console.log("failed because of page size");
+            return false
+        }
+        else if(this.state.structureFields === "undefined" || this.state.structureFields.length === 0) {
+            console.log("failed because of structure fields");
+            return false
+        }
+    }
+
     addComponent(event) {
         this.state.structureFields.push({
-            label: this.state.structureName,
+            label: this.state.componentLabelName,
             component: this.state.currentSelectStructure
         });
         event.preventDefault();
@@ -97,7 +175,29 @@ class AddStructurePage extends Component {
             <div className="container">
                 <div className="row">
                     <div className="col-md-6 col-md-offset-3">
-                        <h1>New Structure</h1>
+                        <h1>Create New Structure</h1>
+                        <h2>Structure Detail</h2>
+                        <form onSubmit={this.addStructure}>
+                            <div className="form-group">
+                                <label htmlFor="structureName">Structure Name</label>
+                                <input type="text" className="form-control" id="structureName" aria-describedby="structureNameHelp" placeholder="Enter Structure Name" value={this.state.structureName} onChange={this.handleStructureNameChange} />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="structureSlug">Structure Slug</label>
+                                <input type="text" className="form-control" id="structureSlug" aria-describedby="structureSlugHelp" placeholder="Enter Structure Name" value={this.state.structureSlug} onChange={this.handleStructureSlugChange} />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="structureDescription">Structure Description</label>
+                                <input type="text" className="form-control" id="structureDescription" aria-describedby="structureDescriptionHelp" placeholder="Enter Structure Description" value={this.state.structureDescription} onChange={this.handleStructureDescriptionChange} />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="structurePageSize">Structure Description</label>
+                                <input type="number" className="form-control" id="structurePageSize" aria-describedby="structurePageSizeHelp" placeholder="Enter Structure Page Size" value={this.state.structurePageSize} onChange={this.handleStructurePageSizeChange} />
+                            </div>
+                        <button className="btn btn-success" onClick={this.addStructure}>Add Structure</button>
+                        </form>
+
+
                         <form onSubmit={this.addComponent}>
                             <input type="text" placeholder="Component Label" onChange={this.handleLabelChange}/>
                             <select value={this.state.currentSelectStructure} onChange={this.handleComponentChange}>     
@@ -118,7 +218,6 @@ class AddStructurePage extends Component {
 
                         <Structure components={this.state.structureFields} removeField={this.removeField}/>
 
-                        <button className="btn btn-success" onClick={this.addStructure}>Add Structure</button>
 
                     </div>
                 </div>

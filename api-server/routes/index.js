@@ -126,24 +126,25 @@ const constructorMethod = (app) => {
         let decoded = jwtDecode(req.headers.authorization);
         let authenticatedUser = await users.getUserById(decoded.id);
 
-        console.log(req.body);
+        // console.log("STRUCTURE");
+        // console.log(req.body);
 
-        let structureName = req.body
+        let structure = req.body
 
         if(authenticatedUser !== "undefined" && authenticatedUser.administrator) {
             let message = {
                 redis: redisConnection,
                 eventName: 'add-structure',
                 data: {
-                    structureName: structureName
+                    structure: structure
                 },
                 method: 'POST',
                 expectsResponse: true
             }
 
             nprSender.sendMessage(message).then((response) => {
-                console.log("RESPONSE");
-                console.log(response);
+                // console.log("RESPONSE");
+                // console.log(response);
                 res.json(response);    
             }).catch((err) => {
                 res.json({error:"Could not add structure"});

@@ -98,8 +98,7 @@ class Structure extends Component{
                     <DatePicker data={structureComponent} />
                     <button className="btn btn-danger" value={structureComponent.label} onClick={this.props.removeField}>Remove</button>                                
                 </div>
-            )
-            
+            )   
         }
         else if(structureComponent.component === "youtube") {
             return (

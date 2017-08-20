@@ -52,8 +52,8 @@ const sendMessage = (messageConfig = defaultMessageConfig) => {
             let failedEventName = `${eventName}:failed:${messageId}`;
 
             console.log("inside expects response");
-            console.log(failedEventName);
-            console.log(successEventName);
+            // console.log(failedEventName);
+            // console.log(successEventName);
             let success = redisConnection.on(successEventName, (response, channel) => {
                 console.log("The event has succeeded");
                 fulfill(response.data);

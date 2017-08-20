@@ -142,14 +142,11 @@ redisConnection.on("fetch-users:get:*", (message, channel) => {
             let successEvent = `${eventName}:success:${requestId}`;
             let failedEvent = `${eventName}:failed:${requestId}`;
         
-        
             console.log("You have reached add-structure:post");
             
-            let structureName  = message.data.structureName.structureName
-            // console.log("STRUCTURE NAME");
-            // console.log(structureName);
+            let structurePrototype  = message.data.structure;
 
-            structures.addStructure(structureName, "test-slug", "test-description", 10, []).then((structure) => {
+            structures.addStructure(structurePrototype).then((structure) => {
                 console.log("STRUCTURE");
                 console.log(structure);
                 if(structure === undefined) {
