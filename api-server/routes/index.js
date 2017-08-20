@@ -45,8 +45,6 @@ const constructorMethod = (app) => {
             }
 
             let response = await nprSender.sendMessage(message);
-            console.log("RESPONSE");
-            console.log(response);
             res.send(response);
             
         });
@@ -55,7 +53,6 @@ const constructorMethod = (app) => {
     //log in user
     app.post('/login', passport.authenticate('local', { failureRedirect: '/', failureFlash: 'Invalid username or password.' }),
          (req, res) => {
-            console.log("I've successfully logged in");
             const token = jwt.sign({
                 id: req.user._id,
                 username: req.user.username,
@@ -66,17 +63,13 @@ const constructorMethod = (app) => {
                 administrator: req.user.administrator,
                 token: token
             }
-            console.log("Sending")
-            console.log(returnObject);
             res.json(returnObject);
     });
 
 
     //get user list
     app.get('/user-list', async (req, res) => {
-        console.log(req);
         let decoded = jwtDecode(req.headers.authorization);
-        console.log(decoded);
         let authenticatedUser = await users.getUserById(decoded.id);
 
         if(authenticatedUser !== "undefined" && authenticatedUser.administrator) {
@@ -100,7 +93,6 @@ const constructorMethod = (app) => {
         let authenticatedUser = await users.getUserById(decoded.id);
 
         let updatedUser = req.body.user;
-        console.log(updatedUser);
 
         if(authenticatedUser !== "undefined" && authenticatedUser.administrator) {
             let message = {
@@ -113,21 +105,17 @@ const constructorMethod = (app) => {
                 expectsResponse: true
             }
             let response = await nprSender.sendMessage(message);
-            console.log("RESPONSE");
-            console.log(response);
             res.json(response);
         }
         else {
             res.json({error: "Could not authenticate user"});
         } 
     });
-
+    //add new structure
     app.post("/add-structure", async(req, res) => {
         let decoded = jwtDecode(req.headers.authorization);
         let authenticatedUser = await users.getUserById(decoded.id);
 
-        // console.log("STRUCTURE");
-        // console.log(req.body);
 
         let structure = req.body
 
@@ -143,8 +131,6 @@ const constructorMethod = (app) => {
             }
 
             nprSender.sendMessage(message).then((response) => {
-                // console.log("RESPONSE");
-                // console.log(response);
                 res.json(response);    
             }).catch((err) => {
                 res.json({error:"Could not add structure"});
@@ -155,10 +141,91 @@ const constructorMethod = (app) => {
         } 
     })
 
+    // get list of all structure
+    app.get("/structure-list", async(req, res) => {
+        let decoded = jwtDecode(req.headers.authorization);
+        let authenticatedUser = await users.getUserById(decoded.id);
+
+        if(authenticatedUser !== "undefined" && authenticatedUser.administrator) {
+            let message = {
+                redis: redisConnection,
+                eventName: 'structure-list',
+                method: 'GET',
+                expectsResponse: true
+            }
+
+            nprSender.sendMessage(message).then((response) => {
+                // console.log("RESPONSE in route path");
+                // console.log(response);
+                res.send(response);    
+            }).catch((err) => {
+                res.json({error:"Could not get structure list"});
+            });
+        } else {
+            res.json({error: "Could not authenticate user"});
+        } 
+    });
+
+    // update structure
+    app.put("/update-structure", async(req, res) => {
+        let decoded = jwtDecode(req.headers.authorization);
+        let authenticatedUser = await users.getUserById(decoded.id);
+
+        let structure = req.body
+        
+
+        if(authenticatedUser !== "undefined" && authenticatedUser.administrator) {
+            let message = {
+                redis: redisConnection,
+                eventName: 'update-structure',
+                method: 'PUT',
+                data: {
+                    structure: structure
+                },
+                expectsResponse: true
+            }
+            nprSender.sendMessage(message).then((response) => {
+                console.log("RESPONSE in route path");
+                console.log(response);
+                res.send(response);    
+            }).catch((err) => {
+                res.json({error:"Could not update structure"});
+            });
+        }
+        else {
+            res.json({error: "Could not authenticate user"});
+        }  
+    });
+
+    app.delete("/remove-structure", async(req, res) => {
+        let decoded = jwtDecode(req.headers.authorization);
+        let authenticatedUser = await users.getUserById(decoded.id);
+
+        let slug = req.body.slug;
+
+        if(authenticatedUser !== "undefined" && authenticatedUser.administrator) {
+            let message = {
+                redis: redisConnection,
+                eventName: 'remove-structure',
+                method: 'DELETE',
+                data: {
+                    slug: slug
+                },
+                expectsResponse: true
+            }
+            nprSender.sendMessage(message).then((response) => {
+                res.send(response);    
+            }).catch((err) => {
+                res.json({error:"Could not update structure"});
+            });
+        }
+        else {
+            res.json({error: "Could not authenticate user"});
+        }  
+    });
 
 
 
-    
 }
 
 module.exports = constructorMethod;

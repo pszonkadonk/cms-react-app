@@ -22,6 +22,20 @@ let exportedMethods = {
             });
         });
     },
+    getStructureBySlug(slug) {
+        if(slug === "" || typeof(slug) === 'undefined') {
+            throw("Invalid slug provided");
+        }
+
+        return structures().then((structureCollection) => {
+            return structureCollection.findOne({slug: slug}).then((structure) => {
+                if(!structure) {
+                    throw("No structure found");
+                }
+                return structure
+            });
+        });  
+    },
     addStructure(structure) {
         console.log("I am in add structure mongodb function");
         if(structure.structureName === '' || typeof(structure.structureName) === 'undefined') {
@@ -76,6 +90,28 @@ let exportedMethods = {
                         }
                     });
                 }); 
+            });
+        });
+    },
+    updateStructure(slug, updatedStructure) {
+        return structures().then((structureCollection) => {
+            let updateCommand = {
+                $set: updatedStructure
+            };
+
+            return structureCollection.updateOne({slug: slug}, updateCommand).then(() => {
+                return this.getStructureBySlug(slug);
+            });
+        });
+    },
+
+    removeStructure(slug) {
+        return structures().then((structureCollection) => {
+            return structureCollection.removeOne({slug: slug}).then((deletedInfo) => {
+                if(deletedInfo.deletedCount === 0) {
+                    return Promise.reject(`Could not delete structure with slug ${slug}`);
+                }
+                return null;
             });
         });
     }

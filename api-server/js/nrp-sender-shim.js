@@ -38,8 +38,10 @@ const sendMessage = (messageConfig = defaultMessageConfig) => {
         }
         else if(messageConfig.method === 'PUT') {
             outgoingEventName = outgoingEventName + ':put:' + messageId;
-        }        
-
+        }     
+        else if(messageConfig.method === 'DELETE') {
+            outgoingEventName = outgoingEventName + ':delete:' + messageId;
+        }     
 
 
         console.log("OUTGOING EVENT NAME");
