@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 
-const TextBox = (props) => {
+const NumberTextBox = (props) => {
+    console.log(props);
     return(
         <div>
             <label>{props.data.label}</label>
-            <input type="text" />
+            <input type="number" />
         </div>
     )
 }
 
-export default TextBox;
+export default NumberTextBox;

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
-const TextBox = (props) => {
+const YoutubeEmbed = (props) => {
+    console.log(props);
     return(
         <div>
             <label>{props.data.label}</label>
@@ -9,4 +10,4 @@ const TextBox = (props) => {
     )
 }
 
-export default TextBox;
+export default YoutubeEmbed;

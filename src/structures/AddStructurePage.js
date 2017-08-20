@@ -4,6 +4,19 @@ import axios from 'axios';
 import setAuthorizationToken from "../utils/setAuthorizationToken.js";
 import Structure from "./Structure"
 
+// structure components
+
+// import TextBox from './structure_components/TextBox.js'
+// import NumberTextBox from './structure_components/NumberTextBox.js'
+// import CheckBox from './structure_components/CheckBox.js'
+// import TextArea from './structure_components/TextArea.js'
+// import ImageUpload from './structure_components/ImageUpload.js'
+// import PageReference from './structure_components/TextBox.js'
+// import WysiwygEditor from './structure_components/WysiwygEditor.js'
+// import YoutubeEmbed from './structure_components/YoutubeEmbed.js'
+// import EntryReference from './structure_components/EntryReference.js'
+// import FileUpload from './structure_components/FileUpload.js'
+
 
 class AddStructurePage extends Component {
     constructor(props) {
@@ -20,6 +33,7 @@ class AddStructurePage extends Component {
         this.handleLabelChange = this.handleLabelChange.bind(this);
         this.handleComponentChange = this.handleComponentChange.bind(this);
         this.sortComponents = this.sortComponents.bind(this);
+        this.removeField = this.removeField.bind(this);
     }
 
     //sort code via stackoverflow 
@@ -61,10 +75,22 @@ class AddStructurePage extends Component {
         event.preventDefault();
         this.setState({
             structureFields: this.state.structureFields.sort(this.sortComponents)
-            
         })
+        console.log(this.state.structureFields);
     }
 
+    removeField(event) {
+        let filteredComponents = this.state.structureFields.filter((elements) => {
+            return elements.label !== event.target.value
+        });
+
+        console.log("FILTERED");
+        console.log(filteredComponents);
+
+        this.setState({
+            structureFields: filteredComponents
+        });
+    }
 
     render() {
         return(
@@ -90,7 +116,7 @@ class AddStructurePage extends Component {
                             <input className="btn btn-primary" type="submit" value="Add Component" placeholder="Component Label" />
                         </form>
 
-                        <Structure components={this.state.structureFields}/>
+                        <Structure components={this.state.structureFields} removeField={this.removeField}/>
 
                         <button className="btn btn-success" onClick={this.addStructure}>Add Structure</button>
 
