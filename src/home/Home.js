@@ -38,24 +38,18 @@ class Home extends Component {
 
     render() {
         return(
-            <div>
+            <div className="container">
                 <h1>Welcome To The CMS App</h1>
-                <div>
-                    {this.state.structureListing.map(element =>
-                        <StructureTile key={element.key} structure={element}/>
+                <div className="row">
+                    <div className="col-md-6 offset-md-3">
+                        {this.state.structureListing.map(element =>
+                            <StructureTile key={element.key} structure={element}/>
                         )}
+                    </div>
                 </div>
             </div>
-
         )
-
     }
-
-
-
-
-
-
 }
 
 

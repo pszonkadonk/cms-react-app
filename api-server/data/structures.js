@@ -105,14 +105,31 @@ let exportedMethods = {
         });
     },
 
-    removeStructure(slug) {
+    removeStructure(slug, name) {
         return structures().then((structureCollection) => {
             return structureCollection.removeOne({slug: slug}).then((deletedInfo) => {
                 if(deletedInfo.deletedCount === 0) {
                     return Promise.reject(`Could not delete structure with slug ${slug}`);
                 }
                 return null;
-            });
+            }).then(() => {
+                dbConnection().then(db => {
+                    let status;
+                    if(db !== "undefined") {
+                        console.log("db was defined");                        
+                        status = 1;
+                        console.log(name);
+                        db.collection(name).drop((err, reply) => {
+                            if(err) {
+                                console.log(err);
+                            }
+                            console.log(reply);
+                        });
+                    }
+                })
+            }).then(() => {
+                return null;
+            })
         });
     }
 }

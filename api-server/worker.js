@@ -244,11 +244,12 @@ redisConnection.on("remove-structure:delete:*", (message, channel) => {
         console.log("You have reached remove-structure:delete");
 
         let deleteSlug = message.data.slug;
+        let deleteName = message.data.name;
             
 
-        structures.removeStructure(deleteSlug).then((response) => {
+        structures.removeStructure(deleteSlug, deleteName).then((response) => {
             if(response === null) {
-                let logMessage = "Structure Removed";
+                let logMessage = "Structure and Entries Removed";
                 redisConnection.emit(successEvent, {
                     requestId: requestId,
                     data: logMessage,

@@ -202,6 +202,7 @@ const constructorMethod = (app) => {
         let authenticatedUser = await users.getUserById(decoded.id);
 
         let slug = req.body.slug;
+        let name = req.body.name;
 
         if(authenticatedUser !== "undefined" && authenticatedUser.administrator) {
             let message = {
@@ -209,7 +210,8 @@ const constructorMethod = (app) => {
                 eventName: 'remove-structure',
                 method: 'DELETE',
                 data: {
-                    slug: slug
+                    name: name,
+                    slug: slug,
                 },
                 expectsResponse: true
             }

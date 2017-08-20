@@ -46,7 +46,8 @@ export class  StructureList extends Component {
         setAuthorizationToken(localStorage.jwtToken); 
         
         let deletePayload = { data: {
-            slug: structure.slug
+            slug: structure.slug,
+            name: structure.name
         }};
 
         axios.delete('/remove-structure', deletePayload).then((response) => {
