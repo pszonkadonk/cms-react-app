@@ -6,37 +6,36 @@ class TextBox extends Component {
         
         this.state = {
             value: "",
-            key: this.props.data.label
+            key: this.props.data.label,
+            mapping: {}
         };
 
         this.handleChange = this.handleChange.bind(this);
-        // this.backUp = this.backUp.bind(this);
+        this.endSave = this.endSave.bind(this);
     }
-
-
 
     handleChange(event) {
         let placeholder = event.target.value;
         this.setState({
             value: placeholder
         });      
-
-        // let foo = {};
-        // foo[this.state.key] = placeholder;
-        
-        // this.backUp(foo);
+        this.state.mapping[this.state.key] = placeholder;
     }
 
-    // backUp(keyValuePair) {
-    //     this.props.send(keyValuePair);
-    // }
+
+    endSave() {
+        this.props.send(this.state.mapping)
+    }
+
 
 
     render() {
         return(
             <div>
+                
                 <label>{this.props.data.label}</label>
                 <input type="text" value={this.state.value} onChange={this.handleChange} />
+                <button className="btn btn-primary" onClick={this.endSave}>Save</button>
             </div>
         )
     }

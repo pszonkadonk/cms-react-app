@@ -3,17 +3,17 @@ import { Route, Link, Switch } from 'react-router-dom';
 
 // structure components
 
-import TextBox from '../structures/structure_components/TextBox.js'
-import NumberTextBox from '../structures/structure_components/NumberTextBox.js'
-import CheckBox from '../structures/structure_components/CheckBox.js'
-import TextArea from '../structures/structure_components/TextArea.js'
-import ImageUpload from '../structures/structure_components/ImageUpload.js'
-import PageReference from '../structures/structure_components/TextBox.js'
-import WysiwygEditor from '../structures/structure_components/WysiwygEditor.js'
-import DatePicker from '../structures/structure_components/DatePicker.js'
-import YoutubeEmbed from '../structures/structure_components/YoutubeEmbed.js'
-import EntryReference from '../structures/structure_components/EntryReference.js'
-import FileUpload from '../structures/structure_components/FileUpload.js'
+import TextBox from './entry_components/TextBox.js'
+import NumberTextBox from './entry_components/NumberTextBox.js'
+import CheckBox from './entry_components/CheckBox.js'
+import TextArea from './entry_components/TextArea.js'
+import ImageUpload from './entry_components/ImageUpload.js'
+import PageReference from './entry_components/TextBox.js'
+import WysiwygEditor from './entry_components/WysiwygEditor.js'
+import DatePicker from './entry_components/DatePicker.js'
+import YoutubeEmbed from './entry_components/YoutubeEmbed.js'
+import EntryReference from './entry_components/EntryReference.js'
+import FileUpload from './entry_components/FileUpload.js'
 
 
 
@@ -24,7 +24,7 @@ class Entry extends Component{
             components: this.props.components
         }
         this.chooseComponent = this.chooseComponent.bind(this);
-        this.midway = this.midway.bind(this);
+        this.midwaySave = this.midwaySave.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -33,22 +33,16 @@ class Entry extends Component{
         });
     }
 
-
-     midway(keyValuePair) {
-        this.props.dataPassThrough(keyValuePair);
-     }
-
-
-
-
-
+    midwaySave(value) {
+        this.props.save(value);
+    }
 
 
     chooseComponent(structureComponent) {
         if(structureComponent.component === "text-input-string") {
             return (
                 <div>
-                    <TextBox data={structureComponent} send={this.midway}/>
+                    <TextBox data={structureComponent} send={this.midwaySave}/>
                 </div>
             )
         }

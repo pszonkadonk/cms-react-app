@@ -84,7 +84,10 @@ let exportedMethods = {
                         let status;
                         if(db !== "undefined") {
                             status = 1;
-                            db.collection(`${createdStructure.slug}-entries`).insert();
+                            console.log("about to create new  collection for entries");
+                            db.collection(`${createdStructure.slug}-entries`).insert({
+                                slug: createdStructure.slug
+                            });
                         }
                     });
                 }); 
