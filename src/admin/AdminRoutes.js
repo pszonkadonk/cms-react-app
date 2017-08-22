@@ -5,7 +5,7 @@ import Structure from '../structures/Structure.js';
 import EditStructurePage from '../structures/EditStructurePage.js';
 import AddStructurePage from '../structures/AddStructurePage.js';
 import StructureEntries from '../structures/StructureEntries.js';
-import EntryAddPage from '../entries/EntryAddPage.js';
+import EntryFormContainer from '../entries/EntryFormContainer.js';
 
 
 
@@ -24,7 +24,7 @@ const AdminRoutes = () => {
                     <li><Link to='/admin/users'>User List</Link></li>
                 </ul>
                 <Switch>
-                    <Route exact path='/admin/structures/:slug/new' component={EntryAddPage}/>
+                    <Route exact path='/admin/structures/:slug/new' component={EntryFormContainer}/>
                     <Route exact path='/admin/structures/new' component={AddStructurePage}/>
                     <Route exact path='/admin/structures/:slug' component={EditStructurePage}/>
                     <Route exact path="/admin/structures/:slug/list" component={StructureEntries} /> 

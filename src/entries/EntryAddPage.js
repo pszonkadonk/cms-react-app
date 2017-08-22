@@ -12,27 +12,10 @@ class EntryAddPage extends Component {
             labelValuePairs: {}
             
         }
-
-
-        // this.initialMapping = this.initialMapping.bind(this);
         this.saveData = this.saveData.bind(this);
-
-        // this.initialMapping()
         
     }
 
-    saveData(foo) {
-        console.log("calling from entry page")
-        console.log(foo);
-        this.state.labelValuePairContainer.push(foo);
-        console.log(this.state.labelValuePairContainer);
-    }
-
-    // initialMapping() {
-    //     this.props.location.state.structure.fields.forEach((field) =>{
-    //         this.state.labelValuePairs[field.label] = ""
-    //     });
-    // }
 
 
 

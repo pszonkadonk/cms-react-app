@@ -7,9 +7,9 @@ class NumberTextBox extends Component {
     render() {
         console.log(this.props);
         return(
-            <div>
+            <div className="form-group">
                 <label>{this.props.data.label}</label>
-                <input type="number" />
+                <input name={this.props.data.label} type="number" value={this.props.data.value} onChange={this.props.handleInput} />
             </div>
         )
     }

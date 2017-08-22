@@ -9,6 +9,7 @@ const users = require('./data/users');
 const structures = require('./data/structures');
 const mongoCollections = require("./config/mongoCollections");
 const dbConnection = require("./config/mongoConnection");
+const uuid = require('uuid');
 
 
 
@@ -286,9 +287,7 @@ redisConnection.on("structure-entries:get:*", (message, channel) => {
 
         let entries = [];
         dbConnection().then(db => {
-            console.log("hello")
             if(db !== "undefined") {
-                console.log("db is defined");
                 let stream = db.collection(`${slug}-entries`).find().stream();
                 stream.on('data', (data) => {
                     entries.push(data);
@@ -301,22 +300,6 @@ redisConnection.on("structure-entries:get:*", (message, channel) => {
                         eventName: eventName
                     });
                 });
-
-                // cursor.each((err, item) => {
-                //     if(item === null) {
-                //         db.close();
-                //         return entries;
-                //     }
-                //     entries.push(item)
-                // }).then((foo) => {
-                //     console.log("ENTRIES");
-                //     console.log(foo);
-                    // redisConnection.emit(successEvent, {
-                    //     requestId: requestId,
-                    //     data: entries,
-                    //     eventName: eventName
-                    // });
-                // });
             } 
             else {
                 let warning = "Could not remove structure";
@@ -348,6 +331,61 @@ redisConnection.on("structure-entries:get:*", (message, channel) => {
         //     console.log(err);
         // });
     });
+
+redisConnection.on("submit-entry:post:*", (message, channel) => {
+    
+        let requestId = message.requestId;
+        let eventName = message.eventName;
+    
+        let successEvent = `${eventName}:success:${requestId}`;
+        let failedEvent = `${eventName}:failed:${requestId}`;
+    
+        console.log("You have reached submit-entry:post");
+        
+        
+        let entryData = message.data.entryData;
+        let entryCollection = message.data.entryCollection;
+
+        // console.log("entry slug collection");
+        // console.log(entrySlug);
+
+        let submission = {
+            _id: uuid.v4(),
+            title: "title",
+            structureType: "structureType",
+            entrySlug: "unique-entry-slug",
+            author: "author",
+            createdData: Date.now(),
+            fields: entryData,
+            comments: []
+        }
+            
+        dbConnection().then(db => {
+            if(db !== "undefined") {
+                db.collection(entryCollection).insert(submission, (err, entry) => {
+
+                    let logMessage = "Entry has been logged";
+                    redisConnection.emit(successEvent, {
+                        requestId: requestId,
+                        data: logMessage,
+                        eventName: eventName
+                    });                    
+                });
+            }
+            else {
+                let warning = "Could not add entry";
+                redisConnection.emit(failedEvent, {
+                    requestId: requestId,
+                    data: warning,
+                    eventName: eventName
+                }); 
+            }
+        }).catch((err) => { 
+            console.log(err);
+        });
+    });
+
+
 
 
 

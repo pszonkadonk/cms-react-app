@@ -9,8 +9,8 @@ class Checkbox extends Component {
         return(
             <div>
                 <label>{this.props.data.label}</label>
-                <input type="checkbox" />
-            </div>
+                <input name={this.props.data.label} type="checkbox" value={this.props.data.value} onChange={this.props.handleInput} />
+                </div>
         )
     }
 }

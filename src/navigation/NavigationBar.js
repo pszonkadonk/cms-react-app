@@ -20,7 +20,6 @@ class NavigationBar extends Component {
             loggedin: loggedin
         };
 
-        console.log(this.state.loggedin)
 
         this.logout = this.logout.bind(this);
     }

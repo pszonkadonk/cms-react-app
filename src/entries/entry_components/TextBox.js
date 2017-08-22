@@ -3,42 +3,41 @@ import React, { Component } from 'react';
 class TextBox extends Component {
     constructor(props) {
         super(props);
-        
+
         this.state = {
-            value: "",
-            key: this.props.data.label,
-            mapping: {}
-        };
-
-        this.handleChange = this.handleChange.bind(this);
-        this.endSave = this.endSave.bind(this);
+            value: ""
+        }
+        console.log(this.props)
+        // this.handleChange = this.handleChange.bind(this);
+        
     }
 
-    handleChange(event) {
-        let placeholder = event.target.value;
-        this.setState({
-            value: placeholder
-        });      
-        this.state.mapping[this.state.key] = placeholder;
-    }
-
-
-    endSave() {
-        this.props.send(this.state.mapping)
-    }
-
-
+    // handleChange(event) {
+    //     let placeholder = event.target.value;
+    //     this.setState({
+    //         value: placeholder
+    //     });
+    // }
 
     render() {
         return(
-            <div>
-                
+            <div className="form-group">
                 <label>{this.props.data.label}</label>
-                <input type="text" value={this.state.value} onChange={this.handleChange} />
-                <button className="btn btn-primary" onClick={this.endSave}>Save</button>
+                <input name={this.props.data.label} type="text" value={this.props.data.value} onChange={this.props.handleInput} />
             </div>
         )
     }
 }
 
 export default TextBox;
+
+{/* <div className="form-group">
+<label className="form-label">{props.title}</label>
+<input
+    className="form-input"
+    name={props.name}
+    type={props.inputType}
+    value={props.content}
+    onChange={props.controlFunc}
+    placeholder={props.placeholder} />
+</div> */}

@@ -247,6 +247,31 @@ const constructorMethod = (app) => {
         });
     });
 
+    // post new entry
+    app.post('/submit-entry', async(req, res) => {
+
+
+        let entryData = req.body.data.entryLog;
+        let entryCollection = `${req.body.data.slug}-entries`        
+        
+        let message = {
+            redis: redisConnection,
+            eventName: 'submit-entry',
+            method: 'POST',
+            data: {
+                entryData: entryData,
+                entryCollection: entryCollection,
+            },
+            expectsResponse: true
+        }
+        nprSender.sendMessage(message).then((response) => {
+            res.send(response);    
+        }).catch((err) => {
+            res.json({error:"Could not get entries"});
+        });
+    });
+    
+
 
 }
 
