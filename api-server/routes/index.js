@@ -12,6 +12,9 @@ const redisConnection = require('../js/redis-connection');
 const nprSender = require('../js/nrp-sender-shim');
 const redis = require('redis');
 const client = redis.createClient();
+const multer = require('multer');
+const uploadDest = multer({ dest: './client/pictures'});
+
 
 bluebird.promisifyAll(redis.RedisClient.prototype);
 bluebird.promisifyAll(redis.Multi.prototype);
@@ -249,28 +252,45 @@ const constructorMethod = (app) => {
 
     // post new entry
     app.post('/submit-entry', async(req, res) => {
+        let decoded = jwtDecode(req.headers.authorization);
+        let authenticatedUser = await users.getUserById(decoded.id);
 
+        console.log("BODY");
+        console.log(req.body);
 
-        let entryData = req.body.data.entryLog;
-        let entryCollection = `${req.body.data.slug}-entries`        
-        
-        let message = {
-            redis: redisConnection,
-            eventName: 'submit-entry',
-            method: 'POST',
-            data: {
-                entryData: entryData,
-                entryCollection: entryCollection,
-            },
-            expectsResponse: true
+        if(authenticatedUser !== "undefined" && authenticatedUser.administrator) {            
+            let entryData = req.body.data.entryLog;
+            let entryCollection = `${req.body.data.slug}-entries`        
+            
+            let message = {
+                redis: redisConnection,
+                eventName: 'submit-entry',
+                method: 'POST',
+                data: {
+                    entryData: entryData,
+                    entryCollection: entryCollection,
+                },
+                expectsResponse: true
+            }
+            nprSender.sendMessage(message).then((response) => {
+                res.send(response);    
+            }).catch((err) => {
+                res.json({error:"Could not get entries"});
+            });
         }
-        nprSender.sendMessage(message).then((response) => {
-            res.send(response);    
-        }).catch((err) => {
-            res.json({error:"Could not get entries"});
-        });
+        else {
+            res.json({error: "Could not authenticate user"});
+        } 
     });
-    
+
+    //upload image
+    app.post('/upload-image', uploadDest.single('photo'), async(req, res) => {
+        let decoded = jwtDecode(req.headers.authorization);
+        let authenticatedUser = await users.getUserById(decoded.id);
+
+        res.send(req.file);
+
+    });
 
 
 }

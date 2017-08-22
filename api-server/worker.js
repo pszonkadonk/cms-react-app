@@ -346,9 +346,6 @@ redisConnection.on("submit-entry:post:*", (message, channel) => {
         let entryData = message.data.entryData;
         let entryCollection = message.data.entryCollection;
 
-        // console.log("entry slug collection");
-        // console.log(entrySlug);
-
         let submission = {
             _id: uuid.v4(),
             title: "title",
@@ -386,6 +383,55 @@ redisConnection.on("submit-entry:post:*", (message, channel) => {
     });
 
 
+redisConnection.on("submit-entry:post:*", (message, channel) => {
+    
+        let requestId = message.requestId;
+        let eventName = message.eventName;
+    
+        let successEvent = `${eventName}:success:${requestId}`;
+        let failedEvent = `${eventName}:failed:${requestId}`;
+    
+        console.log("You have reached submit-entry:post");
+        
+        
+        let entryData = message.data.entryData;
+        let entryCollection = message.data.entryCollection;
+
+        let submission = {
+            _id: uuid.v4(),
+            title: "title",
+            structureType: "structureType",
+            entrySlug: "unique-entry-slug",
+            author: "author",
+            createdData: Date.now(),
+            fields: entryData,
+            comments: []
+        }
+            
+        dbConnection().then(db => {
+            if(db !== "undefined") {
+                db.collection(entryCollection).insert(submission, (err, entry) => {
+
+                    let logMessage = "Entry has been logged";
+                    redisConnection.emit(successEvent, {
+                        requestId: requestId,
+                        data: logMessage,
+                        eventName: eventName
+                    });                    
+                });
+            }
+            else {
+                let warning = "Could not add entry";
+                redisConnection.emit(failedEvent, {
+                    requestId: requestId,
+                    data: warning,
+                    eventName: eventName
+                }); 
+            }
+        }).catch((err) => { 
+            console.log(err);
+        });
+    });
 
 
 
