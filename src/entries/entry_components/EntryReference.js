@@ -7,7 +7,7 @@ class EntryReference extends Component{
     render() {
         console.log(this.props);
         return(
-            <div>
+            <div class="form-group">
                 <h2>Entry Reference</h2>
                 <label>Title</label>
                 <input type="text" />
@@ -15,6 +15,15 @@ class EntryReference extends Component{
                 <input type="text" />
                 <label>StructureType</label>
                 <input type="text" />
+
+                <label>{this.props.data.label}</label>
+                <input name={this.props.data.label} type="text" value={this.props.data.value} onChange={this.props.handleInput} />
+
+                <label>{this.props.data.label}</label>
+                <input name={this.props.data.label} type="text" value={this.props.data.value} onChange={this.props.handleInput} />
+
+                <label>{this.props.data.label}</label>
+                <input name={this.props.data.label} type="text" value={this.props.data.value} onChange={this.props.handleInput} />
             </div>
         )
     }

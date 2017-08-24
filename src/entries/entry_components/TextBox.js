@@ -8,16 +8,10 @@ class TextBox extends Component {
             value: ""
         }
         console.log(this.props)
-        // this.handleChange = this.handleChange.bind(this);
         
     }
 
-    // handleChange(event) {
-    //     let placeholder = event.target.value;
-    //     this.setState({
-    //         value: placeholder
-    //     });
-    // }
+
 
     render() {
         return(
@@ -30,14 +24,3 @@ class TextBox extends Component {
 }
 
 export default TextBox;
-
-{/* <div className="form-group">
-<label className="form-label">{props.title}</label>
-<input
-    className="form-input"
-    name={props.name}
-    type={props.inputType}
-    value={props.content}
-    onChange={props.controlFunc}
-    placeholder={props.placeholder} />
-</div> */}

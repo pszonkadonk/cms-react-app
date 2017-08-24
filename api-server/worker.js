@@ -35,17 +35,17 @@ redisConnection.on("create-user:post:*", (message, channel) => {
     let password = message.data.password;
     let administrator = message.data.administrator;
 
-    console.log(message);
+    // console.log(message);
     users.addUser(username, password, administrator).then((newUser) => {
         if(newUser !== undefined) {
-            console.log("User created");
+            // console.log("User created");
             redisConnection.emit(successEvent, {
                 requestId: requestId,
                 data: newUser,
                 eventName: eventName
             });
         } else {
-            console.log("Could not create user");
+            // console.log("Could not create user");
             let warning = "Could not create user";
             redisConnection.emit(failedEvent, {
                 requestId: requestId,
@@ -76,14 +76,14 @@ redisConnection.on("fetch-users:get:*", (message, channel) => {
                 delete element.hashedPassword;
             });
             if(userCollection !== undefined) {
-                console.log("getting all users");
+                // console.log("getting all users");
                 redisConnection.emit(successEvent, {
                     requestId: requestId,
                     data: userCollection,
                     eventName: eventName
                 });
             } else {
-                console.log("Could not get user collection");
+                // console.log("Could not get user collection");
                 let warning = "Could not get user collection";
                 redisConnection.emit(failedEvent, {
                     requestId: requestId,
@@ -177,8 +177,8 @@ redisConnection.on("structure-list:get:*", (message, channel) => {
         console.log("You have reached structure-list:get");
             
         structures.getAllStructures().then((structureList) => {
-            console.log("STRUCTURE LIST");
-            console.log(structureList);
+            // console.log("STRUCTURE LIST");
+            // console.log(structureList);
             if(structureList !== "undefined") {
                 let logMessage = "Here are the structures";
                 redisConnection.emit(successEvent, {
@@ -213,8 +213,8 @@ redisConnection.on("update-structure:put:*", (message, channel) => {
         let structure = message.data.structure;
             
         structures.updateStructure(structure.slug, structure).then((structureList) => {
-            console.log("STRUCTURE LIST");
-            console.log(structureList);
+            // console.log("STRUCTURE LIST");
+            // console.log(structureList);
             if(structureList !== "undefined") {
                 let logMessage = "Here are the structures";
                 redisConnection.emit(successEvent, {
@@ -332,55 +332,6 @@ redisConnection.on("structure-entries:get:*", (message, channel) => {
         // });
     });
 
-redisConnection.on("submit-entry:post:*", (message, channel) => {
-    
-        let requestId = message.requestId;
-        let eventName = message.eventName;
-    
-        let successEvent = `${eventName}:success:${requestId}`;
-        let failedEvent = `${eventName}:failed:${requestId}`;
-    
-        console.log("You have reached submit-entry:post");
-        
-        
-        let entryData = message.data.entryData;
-        let entryCollection = message.data.entryCollection;
-
-        let submission = {
-            _id: uuid.v4(),
-            title: "title",
-            structureType: "structureType",
-            entrySlug: "unique-entry-slug",
-            author: "author",
-            createdData: Date.now(),
-            fields: entryData,
-            comments: []
-        }
-            
-        dbConnection().then(db => {
-            if(db !== "undefined") {
-                db.collection(entryCollection).insert(submission, (err, entry) => {
-
-                    let logMessage = "Entry has been logged";
-                    redisConnection.emit(successEvent, {
-                        requestId: requestId,
-                        data: logMessage,
-                        eventName: eventName
-                    });                    
-                });
-            }
-            else {
-                let warning = "Could not add entry";
-                redisConnection.emit(failedEvent, {
-                    requestId: requestId,
-                    data: warning,
-                    eventName: eventName
-                }); 
-            }
-        }).catch((err) => { 
-            console.log(err);
-        });
-    });
 
 
 redisConnection.on("submit-entry:post:*", (message, channel) => {
@@ -396,31 +347,54 @@ redisConnection.on("submit-entry:post:*", (message, channel) => {
         
         let entryData = message.data.entryData;
         let entryCollection = message.data.entryCollection;
+        let title = message.data.title;
+        let entrySlug = message.data.entrySlug;
+        let description = message.data.description;
+        let author = message.data.author;
+        let createdDate = message.data.createdDate;
+        let comments = message.data.comments
+
+
+        console.log("MESSAGE");
+        console.log(message.data);
 
         let submission = {
             _id: uuid.v4(),
-            title: "title",
-            structureType: "structureType",
-            entrySlug: "unique-entry-slug",
-            author: "author",
-            createdData: Date.now(),
+            title: title,
+            description: description,
+            structureType: entryCollection,
+            entrySlug: entrySlug,
+            author: author,
+            createdDate: createdDate,
             fields: entryData,
             comments: []
         }
-            
-        dbConnection().then(db => {
-            if(db !== "undefined") {
-                db.collection(entryCollection).insert(submission, (err, entry) => {
 
-                    let logMessage = "Entry has been logged";
-                    redisConnection.emit(successEvent, {
-                        requestId: requestId,
-                        data: logMessage,
-                        eventName: eventName
-                    });                    
+        dbConnection().then(db => {
+            if(db !== undefined) { //make sure entry slug is uniqie
+                db.collection(entryCollection).findOne({entrySlug: entrySlug},(err, entry) => {
+                    console.log(entry);
+                    if(entry) {
+                        console.log("That entry is not unique!");
+                        let warning = "That entry Slug is not unique, please try another";
+                        redisConnection.emit(failedEvent, {
+                            requestId: requestId,
+                            data: warning,
+                            eventName: eventName
+                        });                     
+                    }   
+                    else {
+                        db.collection(entryCollection).insert(submission, (err, entry) => {
+                            let logMessage = "Entry has been logged";
+                            redisConnection.emit(successEvent, {
+                                requestId: requestId,
+                                data: logMessage,
+                                eventName: eventName
+                            });                    
+                        });
+                    }
                 });
-            }
-            else {
+            } else {
                 let warning = "Could not add entry";
                 redisConnection.emit(failedEvent, {
                     requestId: requestId,

@@ -10,26 +10,20 @@ import 'react-datepicker/dist/react-datepicker-cssmodules.css';
 class DatePicker extends React.Component {
   constructor (props) {
     super(props)
-    this.state = {
-      startDate: moment()
-    };
-    this.handleChange = this.handleChange.bind(this);
+
   }
 
-  handleChange(date) {
-    this.setState({
-      startDate: date
-    });
-  }
+
 
   render() {
-
+ 
     return (
-        <div>
+        <div class="form-group">
             <label>{this.props.data.label}</label>
             <ReactDatePicker
-            selected={this.state.startDate}
-            onChange={this.handleChange}
+            name={this.props.data.label}
+            selected={this.props.value}
+            onChange={this.props.handleInput}
             />
         </div>
     )

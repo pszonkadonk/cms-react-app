@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Dropzone from 'react-dropzone';
 
 class FileUpload extends Component {
     constructor(props) {
@@ -6,14 +7,11 @@ class FileUpload extends Component {
     }
     render() {
         return(
-            <div>
-                <label>{this.props.data.label}</label>
-                <form method="POST">
-                    <input type="file" name="file" />
-                    <input type="submit" className="btn btn-primary" />
-                </form>
-        </div>
-        )
+            <Dropzone name={this.props.data.label} multiple={false} onDrop={this.props.dropFile} onChange={this.props.uploadFile}>
+                <h5>{this.props.data.label}</h5>
+                <p> Drop a photo, or click to add. </p>                
+            </Dropzone>
+        );
     }
 }
 

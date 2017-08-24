@@ -14,6 +14,7 @@ const redis = require('redis');
 const client = redis.createClient();
 const multer = require('multer');
 const uploadDest = multer({ dest: './client/pictures'});
+const uploadDestFile = multer({dest: './client/files'});
 
 
 bluebird.promisifyAll(redis.RedisClient.prototype);
@@ -255,6 +256,8 @@ const constructorMethod = (app) => {
         let decoded = jwtDecode(req.headers.authorization);
         let authenticatedUser = await users.getUserById(decoded.id);
 
+        let author = decoded.username
+
         console.log("BODY");
         console.log(req.body);
 
@@ -269,13 +272,19 @@ const constructorMethod = (app) => {
                 data: {
                     entryData: entryData,
                     entryCollection: entryCollection,
+                    entrySlug: req.body.data.entrySlug,
+                    title: req.body.data.title,
+                    description: req.body.data.description,
+                    author: author,
+                    createdDate: req.body.data.createdDate,
+                    comments: req.body.data.comments
                 },
                 expectsResponse: true
             }
             nprSender.sendMessage(message).then((response) => {
                 res.send(response);    
             }).catch((err) => {
-                res.json({error:"Could not get entries"});
+                res.json({error:err});
             });
         }
         else {
@@ -292,6 +301,16 @@ const constructorMethod = (app) => {
 
     });
 
+    //upload file
+    app.post('/upload-file', uploadDestFile.single('file'), async(req, res) => {
+        console.log("hello frmo upload file");
+        let decoded = jwtDecode(req.headers.authorization);
+        let authenticatedUser = await users.getUserById(decoded.id);
+
+
+        res.send(req.file);
+
+    });
 
 }
 

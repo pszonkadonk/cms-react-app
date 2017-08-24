@@ -8,9 +8,9 @@ class PageReference extends Component {
         console.log(props);
         console.log(this.props)
         return(
-            <div>
+            <div class="form-group">
                 <h1>{this.props.data.label}</h1>
-                <label>Title</label>
+                <input name={this.props.data.label} type="text" value={this.props.data.value} onChange={this.props.handleInput} />
             </div>
         )
     }
