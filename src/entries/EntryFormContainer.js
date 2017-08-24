@@ -44,7 +44,6 @@ class Entry extends Component{
         this.handleChangeEditor = this.handleChangeEditor.bind(this);
         this.handleDateChange = this.handleDateChange.bind(this);
         this.handleAddVideo = this.handleAddVideo.bind(this);
-        this.handleFileUpload = this.handleFileUpload.bind(this);
         this.handleTitleChange = this.handleTitleChange.bind(this);
         this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
         this.handleEntrySlugChange = this.handleEntrySlugChange.bind(this);
@@ -175,12 +174,6 @@ class Entry extends Component{
             components: this.state.components
         });
         console.log(this.state.components);
-    }
-
-    handleFileUpload(event) {
-        console.log(event.target.value);
-        
-        
     }
     
     dropHandler(file) {

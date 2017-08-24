@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
+import setAuthorizationToken from "../utils/setAuthorizationToken.js";
+
 
 class StructureEntries extends Component {
     constructor(props) {
@@ -9,9 +11,11 @@ class StructureEntries extends Component {
         this.state = {
             slug: this.props.location.state.structure.slug,
             entries: []
-            
         }
+
         this.getStructureEntries = this.getStructureEntries.bind(this);
+        this.removeEntry = this.removeEntry.bind(this);
+        this.editEntry = this.editEntry.bind(this);
     }
     
     
@@ -27,16 +31,46 @@ class StructureEntries extends Component {
                 alert("There was an issue returning entries");
                 return
             }
-            console.log("ENTRIES");
-            console.log(response.data);
             this.setState({
-                entries: response.data
+                entries: response.data,
             });
         });
     }
 
+    removeEntry(event) {
+        setAuthorizationToken(localStorage.jwtToken);                    
+        console.log(event.target.value);        
+        let deletePayload = {
+            data: {
+                entrySlug: event.target.value,
+                structureSlug: this.state.slug
+            }
+        }
+        axios.delete('/remove-entry', deletePayload).then((response) => {
+            if(response.data.error) {
+                alert("There was an deleting the entry");
+                return;
+            }
+
+            alert( "Entry has been removed");
+                this.getStructureEntries(this.props.location.state.structure);
+        });
+    }
+
+    editEntry(event) {
+        let editEntrySlug = event.target.value;
+        this.props.history.push({
+            pathname: `/admin/structures/${this.state.slug}/${editEntrySlug}`,
+            structureSlug: this.state.slug,
+            entrySlug: editEntrySlug
+        });
+
+        console.log(event.target.value);
+
+    }
 
     render() {
+        console.log(this.state);
         return(
             <div>
                 <h1>Entry Count: {this.state.entries.length}</h1>
@@ -56,8 +90,8 @@ class StructureEntries extends Component {
                                 <td key={element.key}>{element.title}</td>
                                 <td key={element.key}>{element.author}</td>
                                 <td key={element.key}>{element.createdDate}</td>
-                                <td key={element.key}><button className="btn btn-info" value={element.slug}>Edit</button></td>                            
-                                <td key={element.key}><button className="btn btn-danger" value={element.slug}>Delete</button></td>                            
+                                <td key={element.key}><button className="btn btn-info" onClick={this.editEntry} value={element.entrySlug}>Edit</button></td>                            
+                                <td key={element.key}><button className="btn btn-danger" value={element.entrySlug} onClick={this.removeEntry}>Delete</button></td>                            
                             </tr>
                         )}  
                     </tbody>          

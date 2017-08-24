@@ -407,6 +407,99 @@ redisConnection.on("submit-entry:post:*", (message, channel) => {
         });
     });
 
+redisConnection.on("remove-entry:delete:*", (message, channel) => {
+    
+        let requestId = message.requestId;
+        let eventName = message.eventName;
+    
+        let successEvent = `${eventName}:success:${requestId}`;
+        let failedEvent = `${eventName}:failed:${requestId}`;
+    
+        console.log("You have reached remove-entry:delete");
 
+        let deleteEntrySlug = message.data.entrySlug;
+        let structureSlug = `${message.data.structureSlug}-entries`;
+    
+        dbConnection().then(db => {
+            if(db !== undefined) { //make sure entry slug is uniqie
+                db.collection(structureSlug).removeOne({entrySlug: deleteEntrySlug},(err, entry) => {
+                    console.log(entry);
+                    if(err) {
+                        console.log("That entry could not be deleted!");
+                        let warning = "That entry could not be deleted!";
+                        redisConnection.emit(failedEvent, {
+                            requestId: requestId,
+                            data: warning,
+                            eventName: eventName
+                        });                     
+                    }
+                    else {
+                        let logMessage = "Entry Removed";
+                        redisConnection.emit(successEvent, {
+                            requestId: requestId,
+                            data: logMessage,
+                            eventName: eventName
+                        });
+                    }  
+                });
+            } 
+            else {
+                let warning = "Could not remove structure";
+                redisConnection.emit(failedEvent, {
+                    requestId: requestId,
+                    data: warning,
+                    eventName: eventName
+                });
+            }
+        }).catch((err) => { 
+            console.log(err);
+        });
+    });
 
+    redisConnection.on("structure-entry:get:*", (message, channel) => {
+        
+            let requestId = message.requestId;
+            let eventName = message.eventName;
+        
+            let successEvent = `${eventName}:success:${requestId}`;
+            let failedEvent = `${eventName}:failed:${requestId}`;
+        
+            console.log("You have reached struture-entry:get");
+    
+            let structureSlug = `${message.data.structureSlug}-entries`;
+            let entrySlug = message.data.entrySlug
+
+            dbConnection().then(db => {
+                if(db !== "undefined") {
+                    db.collection(`${structureSlug}`).findOne({entrySlug: entrySlug}, (err, entry) => {
+                        console.log("ENTRY");
+                        console.log(entry);
+                        if(err) {
+                            let warning = "Could not get entry";
+                            redisConnection.emit(failedEvent, {
+                                requestId: requestId,
+                                data: warning,
+                                eventName: eventName
+                            });  
+                        }
+                        else {
+                            redisConnection.emit(successEvent, {
+                                requestId: requestId,
+                                data: entry,
+                                eventName: eventName
+                            });
+                        }
+                    }) 
+                }
+                else {
+                    let warning = "Could not get entry";
+                    redisConnection.emit(failedEvent, {
+                        requestId: requestId,
+                        data: warning,
+                        eventName: eventName
+                    });  
+                }
+            });            
+        });
+    
 

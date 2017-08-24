@@ -6,7 +6,7 @@ import EditStructurePage from '../structures/EditStructurePage.js';
 import AddStructurePage from '../structures/AddStructurePage.js';
 import StructureEntries from '../structures/StructureEntries.js';
 import EntryFormContainer from '../entries/EntryFormContainer.js';
-
+import EditEntryContainer from '../entries/EditEntryContainer.js';
 
 
 import UserList from '../user/UserList';
@@ -28,6 +28,7 @@ const AdminRoutes = () => {
                     <Route exact path='/admin/structures/new' component={AddStructurePage}/>
                     <Route exact path='/admin/structures/:slug' component={EditStructurePage}/>
                     <Route exact path="/admin/structures/:slug/list" component={StructureEntries} /> 
+                    <Route exact path="/admin/structures/:slug/:entrySlug" component={EditEntryContainer} /> 
                     <Route path='/admin/structures' component={StructureList}/>
                     <Route exact path='/admin/users' component={UserList}/>
                 </Switch>

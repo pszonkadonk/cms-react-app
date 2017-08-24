@@ -312,6 +312,107 @@ const constructorMethod = (app) => {
 
     });
 
+    //delete entry 
+    app.post('/submit-entry', async(req, res) => {
+        let decoded = jwtDecode(req.headers.authorization);
+        let authenticatedUser = await users.getUserById(decoded.id);
+
+        console.log(req.body);
+
+        if(authenticatedUser !== "undefined" && authenticatedUser.administrator) {            
+            let entryData = req.body.data.entryLog;
+            let entryCollection = `${req.body.data.slug}-entries`        
+            
+            let message = {
+                redis: redisConnection,
+                eventName: 'submit-entry',
+                method: 'POST',
+                data: {
+                    entryData: entryData,
+                    entryCollection: entryCollection,
+                    entrySlug: req.body.data.entrySlug,
+                    title: req.body.data.title,
+                    description: req.body.data.description,
+                    author: author,
+                    createdDate: req.body.data.createdDate,
+                    comments: req.body.data.comments
+                },
+                expectsResponse: true
+            }
+            nprSender.sendMessage(message).then((response) => {
+                res.send(response);    
+            }).catch((err) => {
+                res.json({error:err});
+            });
+        }
+        else {
+            res.json({error: "Could not authenticate user"});
+        } 
+    });
+
+    //upload image
+    app.delete('/remove-entry', async(req, res) => {
+        let decoded = jwtDecode(req.headers.authorization);
+        let authenticatedUser = await users.getUserById(decoded.id);
+
+        let entrySlug = req.body.entrySlug;
+        let structureSlug = req.body.structureSlug;
+
+        if(authenticatedUser !== "undefined" && authenticatedUser.administrator) {
+            let message = {
+                redis: redisConnection,
+                eventName: 'remove-entry',
+                method: 'DELETE',
+                data: {
+                    entrySlug: entrySlug,
+                    structureSlug: structureSlug
+                },
+                expectsResponse: true
+            }
+            nprSender.sendMessage(message).then((response) => {
+                res.send(response);    
+            }).catch((err) => {
+                res.json({error:"Could not remove entry"});
+            });
+        }
+        else {
+            res.json({error: "Could not authenticate user"});
+        }  
+    });
+
+    //get particular entry 
+    app.get('/:structureSlug/:entrySlug', async(req, res) => {
+        let decoded = jwtDecode(req.headers.authorization);
+        let authenticatedUser = await users.getUserById(decoded.id);
+
+        console.log(req.params);
+        let structureSlug = req.params.structureSlug;
+        let entrySlug = req.params.entrySlug;
+
+
+        if(authenticatedUser !== "undefined" && authenticatedUser.administrator) {
+            let message = {
+                redis: redisConnection,
+                eventName: 'structure-entry',
+                method: 'GET',
+                data: {
+                    entrySlug: entrySlug,
+                    structureSlug: structureSlug
+                },
+                expectsResponse: true
+            }
+            nprSender.sendMessage(message).then((response) => {
+                res.send(response);    
+            }).catch((err) => {
+                res.json({error:"Could not remove entry"});
+            });
+        }
+        else {
+            res.json({error: "Could not authenticate user"});
+        }  
+    });
+
+
 }
 
 module.exports = constructorMethod;
