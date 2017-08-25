@@ -7,7 +7,7 @@ import NumberTextBox from './entry_components/NumberTextBox.js'
 import CheckBox from './entry_components/CheckBox.js'
 import TextArea from './entry_components/TextArea.js'
 import ImageUpload from './entry_components/ImageUpload.js'
-import PageReference from './entry_components/TextBox.js'
+import PageReference from './entry_components/PageReference.js'
 import WysiwygEditor from './entry_components/WysiwygEditor.js'
 import DatePicker from './entry_components/DatePicker.js'
 import YoutubeEmbed from './entry_components/YoutubeEmbed.js'
@@ -108,9 +108,10 @@ class EditEntryContainer extends Component {
             )
         }
         else if(element.component === "link") {
+            let targetLink = element.value
             return (
                 <div>
-                    <PageReference data={element} handleInput={this.handleChange} />
+                    <PageReference data={element} handleInput={this.handleChange} value={targetLink} />
                 </div>
             )
         }
@@ -190,7 +191,7 @@ class EditEntryContainer extends Component {
                 alert(response.data.error);
                 return;
             }
-            alert(response.data);
+            alert("You have successfully updated the entry");
             this.props.history.push("/admin/structures");
         });
     }

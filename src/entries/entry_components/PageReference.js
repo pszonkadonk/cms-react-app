@@ -5,11 +5,9 @@ class PageReference extends Component {
         super(props);
     }
     render() {
-        console.log(props);
-        console.log(this.props)
         return(
             <div class="form-group">
-                <h1>{this.props.data.label}</h1>
+                <label>{this.props.data.label} </label>
                 <input name={this.props.data.label} type="text" value={this.props.data.value} onChange={this.props.handleInput} />
             </div>
         )
@@ -17,3 +15,5 @@ class PageReference extends Component {
 }
 
 export default PageReference;
+
+{/* <a href={this.props.data.value} name={this.props.data.label} ><h1>{this.props.data.label}</h1></a> */}
