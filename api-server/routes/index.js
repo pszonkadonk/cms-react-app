@@ -14,7 +14,7 @@ const redis = require('redis');
 const client = redis.createClient();
 const multer = require('multer');
 const uploadDest = multer({ dest: '../src/client/pictures'});
-const uploadDestFile = multer({dest: './client/files'});
+const uploadDestFile = multer({dest: '../src/client/files'});
 
 
 bluebird.promisifyAll(redis.RedisClient.prototype);

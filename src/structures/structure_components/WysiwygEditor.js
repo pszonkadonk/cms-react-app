@@ -7,20 +7,14 @@ class WysiwygEditor extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            text: ''
+            value: ''
          } 
-        this.handleChange = this.handleChange.bind(this)
       }
     
-      handleChange(value) {
-        this.setState({
-             text: value
-        });
-      }
     
       render() {
         return (
-          <ReactQuill onChange={this.handleChange} />
+          <ReactQuill name={this.props.data.label} type="text" value={this.props.data.value} onChange={this.props.handleInput} />
         )
       }
 }

@@ -5,6 +5,8 @@ import { ReactRouter, BrowserRouter, Route, Link, NavLink } from 'react-router-d
 import SignupForm from '../forms/SignupForm.js'
 import LoginForm from '../forms/LoginForm.js'
 
+import StructureListNonAdmin from '../structures/StructureListNonAdmin';
+
 
 class NavigationBar extends Component {
     constructor(props) {
@@ -57,6 +59,9 @@ class NavigationBar extends Component {
                             </li>
                         )
                         }
+                        <li className="nav-item active nav-link">
+                            <NavLink activeClassName="active" to="/structures">Structure List</NavLink>
+                        </li>
                         {localStorage.administrator === "true" ? (
                             <li className="nav-item active nav-link">
                                 <NavLink activeClassName="active" to="/admin">Admin Panel</NavLink>

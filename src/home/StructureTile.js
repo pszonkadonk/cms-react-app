@@ -1,6 +1,11 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
+import { ReactRouter, BrowserRouter as Router, Route, Link, NavLink, Redirect, history } from 'react-router-dom';
+
+import StructureEntriesNonAdmin from '../structures/StructureEntriesNonAdmin';
+
+
 import bluebg from '../resources/img/royal-blue-bg.jpg';
 
 class StructureTile extends Component {
@@ -10,7 +15,8 @@ class StructureTile extends Component {
         this.state = {
             structureEntries: []
         }
-        this.getEntriesList = this.getEntriesList.bind(this);        
+        this.getEntriesList = this.getEntriesList.bind(this); 
+        this.viewEntries = this.viewEntries.bind(this) ;      
     }
 
     componentWillMount() {
@@ -32,6 +38,14 @@ class StructureTile extends Component {
         });
     }
 
+    viewEntries(event) {
+        let redirectEntrySlug = this.props.structure.slug;
+        this.props.pastHistory.push({
+            pathname: `/structures/${redirectEntrySlug}/list`,
+            structure: this.props
+        });
+    }
+
     render() {
         return (
             <div className="card"> 
@@ -40,7 +54,7 @@ class StructureTile extends Component {
                     <h4 className="card-title">{this.props.structure.name}</h4>
                     <h6 className="card-title">Entries: {this.state.structureEntries.length} </h6>
                     <p className="card-text">{this.props.structure.description}</p>
-                    <a href="#" className="btn btn-primary">Go somewhere</a>
+                    <a href="#" className="btn btn-primary" onClick={this.viewEntries}>Go somewhere</a>
                 </div>
             </div>
 

@@ -7,9 +7,9 @@ class TextArea extends Component {
     render() {
         console.log(this.props);
         return(
-            <div>
+            <div className="form-group">
                 <label>{this.props.data.label}</label>
-                <textarea></textarea>
+                <textarea name={this.props.data.label} type="text" value={this.props.data.value} onChange={this.props.handleInput} rows="4" cols="50"></textarea>
             </div>
         )
     }

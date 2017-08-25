@@ -4,17 +4,17 @@ import moment from 'moment';
 
 // structure components
 
-import TextBox from './entry_components/TextBox.js'
-import NumberTextBox from './entry_components/NumberTextBox.js'
-import CheckBox from './entry_components/CheckBox.js'
-import TextArea from './entry_components/TextArea.js'
-import ImageUpload from './entry_components/ImageUpload.js'
-import PageReference from './entry_components/TextBox.js'
-import WysiwygEditor from './entry_components/WysiwygEditor.js'
-import DatePicker from './entry_components/DatePicker.js'
-import YoutubeEmbed from './entry_components/YoutubeEmbed.js'
-import EntryReference from './entry_components/EntryReference.js'
-import FileUpload from './entry_components/FileUpload.js'
+import TextBox from '../structures/structure_components/TextBox.js'
+import NumberTextBox from '../structures/structure_components/NumberTextBox.js'
+import CheckBox from '../structures/structure_components/CheckBox.js'
+import TextArea from '../structures/structure_components/TextArea.js'
+import ImageUpload from '../structures/structure_components/ImageUpload.js'
+import PageReference from '../structures/structure_components/PageReference.js'
+import WysiwygEditor from '../structures/structure_components/WysiwygEditor.js'
+import DatePicker from '../structures/structure_components/DatePicker.js'
+import YoutubeEmbed from '../structures/structure_components/YoutubeEmbed.js'
+import EntryReference from '../structures/structure_components/EntryReference.js'
+import FileUpload from '../structures/structure_components/FileUpload.js'
 
 import setAuthorizationToken from "../utils/setAuthorizationToken.js";
 
