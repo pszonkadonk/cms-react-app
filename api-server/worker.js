@@ -456,50 +456,107 @@ redisConnection.on("remove-entry:delete:*", (message, channel) => {
         });
     });
 
-    redisConnection.on("structure-entry:get:*", (message, channel) => {
-        
-            let requestId = message.requestId;
-            let eventName = message.eventName;
-        
-            let successEvent = `${eventName}:success:${requestId}`;
-            let failedEvent = `${eventName}:failed:${requestId}`;
-        
-            console.log("You have reached struture-entry:get");
+redisConnection.on("structure-entry:get:*", (message, channel) => {
     
-            let structureSlug = `${message.data.structureSlug}-entries`;
-            let entrySlug = message.data.entrySlug
+        let requestId = message.requestId;
+        let eventName = message.eventName;
+    
+        let successEvent = `${eventName}:success:${requestId}`;
+        let failedEvent = `${eventName}:failed:${requestId}`;
+    
+        console.log("You have reached struture-entry:get");
 
-            dbConnection().then(db => {
-                if(db !== "undefined") {
-                    db.collection(`${structureSlug}`).findOne({entrySlug: entrySlug}, (err, entry) => {
-                        console.log("ENTRY");
-                        console.log(entry);
-                        if(err) {
-                            let warning = "Could not get entry";
-                            redisConnection.emit(failedEvent, {
-                                requestId: requestId,
-                                data: warning,
-                                eventName: eventName
-                            });  
-                        }
-                        else {
-                            redisConnection.emit(successEvent, {
-                                requestId: requestId,
-                                data: entry,
-                                eventName: eventName
-                            });
-                        }
-                    }) 
-                }
-                else {
-                    let warning = "Could not get entry";
-                    redisConnection.emit(failedEvent, {
-                        requestId: requestId,
-                        data: warning,
-                        eventName: eventName
-                    });  
-                }
-            });            
-        });
+        let structureSlug = `${message.data.structureSlug}-entries`;
+        let entrySlug = message.data.entrySlug
+
+        dbConnection().then(db => {
+            if(db !== "undefined") {
+                db.collection(`${structureSlug}`).findOne({entrySlug: entrySlug}, (err, entry) => {
+                    if(err) {
+                        let warning = "Could not get entry";
+                        redisConnection.emit(failedEvent, {
+                            requestId: requestId,
+                            data: warning,
+                            eventName: eventName
+                        });  
+                    }
+                    else {
+                        redisConnection.emit(successEvent, {
+                            requestId: requestId,
+                            data: entry,
+                            eventName: eventName
+                        });
+                    }
+                }) 
+            }
+            else {
+                let warning = "Could not get entry";
+                redisConnection.emit(failedEvent, {
+                    requestId: requestId,
+                    data: warning,
+                    eventName: eventName
+                });  
+            }
+        });            
+    });
+
+redisConnection.on("update-entry:put:*", (message, channel) => {
     
+        let requestId = message.requestId;
+        let eventName = message.eventName;
+    
+        let successEvent = `${eventName}:success:${requestId}`;
+        let failedEvent = `${eventName}:failed:${requestId}`;
+    
+        console.log("You have reached update-entry:put");
+
+        console.log("MESSAGE");
+        console.log(message);
+
+        let entryCollection = message.data.entryCollection;
+        let entrySlug = message.data.entrySlug
+
+        dbConnection().then(db => {
+            if(db !== "undefined") {
+                db.collection(`${entryCollection}`).
+                    update({entrySlug: entrySlug},
+                        {
+                            $set:{
+                                title: message.data.title,
+                                description: message.data.description,
+                                fields: message.data.entryData
+                            }
+                        }, (err, entry) => {
+                    if(err) {
+                        let warning = "Could not update entry";
+                        console.log(warning);
+                        redisConnection.emit(failedEvent, {
+                            requestId: requestId,
+                            data: warning,
+                            eventName: eventName
+                        });  
+                    }
+                    else {
+                        console.log("updated entry");
+                        redisConnection.emit(successEvent, {
+                            requestId: requestId,
+                            data: entry,
+                            eventName: eventName
+                        });
+                    }
+                }) 
+            }
+            else {
+                let warning = "Could update entry";
+                redisConnection.emit(failedEvent, {
+                    requestId: requestId,
+                    data: warning,
+                    eventName: eventName
+                });  
+            }
+        });            
+    });
+
+
+
 

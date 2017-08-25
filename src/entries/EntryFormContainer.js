@@ -153,7 +153,7 @@ class Entry extends Component{
         for(let i = 0; i < this.state.components.length; i++) {
             if(this.state.components[i].component === "datepicker") {
                 console.log("date sholud be changed");
-                this.state.components[i].value = date.add
+                this.state.components[i].value = date
                 break;
             }
         }

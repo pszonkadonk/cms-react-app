@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+
 import axios from 'axios';
 
 import TextBox from './entry_components/TextBox.js'
@@ -13,6 +14,7 @@ import YoutubeEmbed from './entry_components/YoutubeEmbed.js'
 import EntryReference from './entry_components/EntryReference.js'
 import FileUpload from './entry_components/FileUpload.js'
 
+import moment from 'moment';
 
 import setAuthorizationToken from "../utils/setAuthorizationToken.js";
 
@@ -40,6 +42,7 @@ class EditEntryContainer extends Component {
         this.handleChangeEditor = this.handleChangeEditor.bind(this);
         this.handleDateChange = this.handleDateChange.bind(this);
         this.handleAddVideo = this.handleAddVideo.bind(this);
+        this.editDropHandler = this.editDropHandler.bind(this);
 
     }
 
@@ -100,7 +103,7 @@ class EditEntryContainer extends Component {
         else if(element.component === "image-upload") {
             return (
                 <div>
-                    <ImageUpload data={element} dropPhoto={this.dropHandler} changeThings={this.handleImageChange}/>
+                    <ImageUpload data={element} dropPhoto={this.editDropHandler} changeThings={this.handleImageChange}/>
                 </div>
             )
         }
@@ -119,9 +122,10 @@ class EditEntryContainer extends Component {
             )
         }
         else if(element.component === "datepicker") {
+            let parsedDate = moment(element.value);
             return (
                 <div>
-                    <DatePicker data={element} handleInput={this.handleDateChange} />
+                    <DatePicker data={element} handleInput={this.handleDateChange} value = {parsedDate} />
                 </div>
             )   
         }
@@ -151,7 +155,7 @@ class EditEntryContainer extends Component {
 
     handleTitleChange(event) {
         this.setState({
-          entryTitle: event.target.value  
+          title: event.target.value  
         });
     }
 
@@ -166,10 +170,10 @@ class EditEntryContainer extends Component {
         setAuthorizationToken(localStorage.jwtToken);        
         let entryPayLoad = {
             data: {
-                entryLog: this.state.components,
-                slug: this.state.structure,
+                fields: this.state.fields,
+                structureSlug: this.state.structureSlug,
                 entrySlug: this.state.entrySlug,  // the entries unique identifier
-                title: this.state.entryTitle,
+                title: this.state.title,
                 description: this.state.description,
                 author: "author",
                 createdDate: this.state.createdDate,
@@ -179,8 +183,8 @@ class EditEntryContainer extends Component {
 
         console.log(entryPayLoad);
 
-        axios.post('/submit-entry', entryPayLoad).then((response) => {
-            console.log("I submitted!");
+        axios.put('/update-entry', entryPayLoad).then((response) => {
+            console.log("I updated!");
 
             if(response.data.error) {
                 alert(response.data.error);
@@ -244,7 +248,7 @@ class EditEntryContainer extends Component {
         for(let i = 0; i < this.state.fields.length; i++) {
             if(this.state.fields[i].component === "datepicker") {
                 console.log("date sholud be changed");
-                this.state.fields[i].value = date.add
+                this.state.fields[i].value = date
                 break;
             }
         }
@@ -304,6 +308,54 @@ class EditEntryContainer extends Component {
                 }
             });
         }
+    }
+
+    editDropHandler (file) {
+        console.log(file)
+        setAuthorizationToken(localStorage.jwtToken);                        
+        let fileType = file[0].type.split('/')[0]
+        if(fileType === 'image') {
+            let photo = new FormData();
+            photo.append('photo', file[0]);
+            photo.append('entrySlug', this.state.entrySlug);
+            photo.append('structureSlug', this.state.structureSlug);
+            // photo.append('entrySlug', );  
+
+    
+            axios.post('/edit-upload-image', photo).then((response) => {
+                console.log("response from posting image");
+                console.log(response);
+    
+                for(let i = 0; i < this.state.fields.length; i++) { //add image path to image tag for db
+                    if(this.state.fields[i].component === "image-upload") {
+                        console.log("it is true!");
+                        this.state.fields[i].value = response.data.path;
+                        break;
+                    }
+                }
+            });
+        }
+        else {
+            let uploadedFile = new FormData();
+            uploadedFile.append('file', file[0]);
+            
+            axios.post('/edit-upload-file', uploadedFile).then((response) => {
+                console.log("response from file upload");
+                console.log(response);
+    
+                for(let i = 0; i < this.state.fields.length; i++) { //add image path to image tag for db
+                    if(this.state.fields[i].component === "upload-file" && this.state.fields[i].value === undefined) {
+                        this.state.fields[i].value = response.data.path;
+                        break;
+                    }
+                }
+            });
+        }
+
+        this.setState({
+            fields: this.state.fields
+        })
+
     }
 
             

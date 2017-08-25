@@ -13,7 +13,7 @@ const nprSender = require('../js/nrp-sender-shim');
 const redis = require('redis');
 const client = redis.createClient();
 const multer = require('multer');
-const uploadDest = multer({ dest: './client/pictures'});
+const uploadDest = multer({ dest: '../src/client/pictures'});
 const uploadDestFile = multer({dest: './client/files'});
 
 
@@ -256,7 +256,7 @@ const constructorMethod = (app) => {
         let decoded = jwtDecode(req.headers.authorization);
         let authenticatedUser = await users.getUserById(decoded.id);
 
-        let author = decoded.username
+        let author = decoded.username;
 
         console.log("BODY");
         console.log(req.body);
@@ -301,6 +301,47 @@ const constructorMethod = (app) => {
 
     });
 
+
+    //upload image
+    app.post('/edit-upload-image', uploadDest.single('photo'), async(req, res) => {
+        let decoded = jwtDecode(req.headers.authorization);
+        let authenticatedUser = await users.getUserById(decoded.id);
+
+        // console.log("Req")
+        // console.log(req);
+
+        let entrySlug = req.body.entrySlug;
+        let structureSlug = req.body.structureSlug;
+
+        console.log('req.photo')
+        console.log(req);
+
+        // if(authenticatedUser !== "undefined" && authenticatedUser.administrator) {            
+        //     let message = {
+        //         redis: redisConnection,
+        //         eventName: 'update-entry-image',
+        //         method: 'PUT',
+        //         data: {
+        //             entryData: req.body.data.fields,
+        //             structureSlug: req.body.data.structureSlug
+
+        //         },
+        //         expectsResponse: true
+        //     }
+        //     nprSender.sendMessage(message).then((response) => {
+        //         res.send(response);    
+        //     }).catch((err) => {
+        //         res.json({error:err});
+        //     });
+        //     }
+        //     else {
+        //     res.json({error: "Could not authenticate user"});
+        //     }
+
+        res.send(req.file);
+
+    });
+
     //upload file
     app.post('/upload-file', uploadDestFile.single('file'), async(req, res) => {
         console.log("hello frmo upload file");
@@ -312,7 +353,7 @@ const constructorMethod = (app) => {
 
     });
 
-    //delete entry 
+    //add entry 
     app.post('/submit-entry', async(req, res) => {
         let decoded = jwtDecode(req.headers.authorization);
         let authenticatedUser = await users.getUserById(decoded.id);
@@ -412,7 +453,43 @@ const constructorMethod = (app) => {
         }  
     });
 
+    //delete entry 
+    app.put('/update-entry', async(req, res) => {
+        let decoded = jwtDecode(req.headers.authorization);
+        let authenticatedUser = await users.getUserById(decoded.id);
 
+        let author = decoded.username;
+
+        console.log("req.body.data");        
+        console.log(req.body.data);
+        if(authenticatedUser !== "undefined" && authenticatedUser.administrator) {            
+                       
+            let message = {
+                redis: redisConnection,
+                eventName: 'update-entry',
+                method: 'PUT',
+                data: {
+                    entryData: req.body.data.fields,
+                    entryCollection: `${req.body.data.structureSlug}-entries`,
+                    entrySlug: req.body.data.entrySlug,
+                    title: req.body.data.title,
+                    description: req.body.data.description,
+                    author: author,
+                    createdDate: req.body.data.createdDate,
+                    comments: req.body.data.comments
+                },
+                expectsResponse: true
+            }
+            nprSender.sendMessage(message).then((response) => {
+                res.send(response);    
+            }).catch((err) => {
+                res.json({error:err});
+            });
+        }
+        else {
+            res.json({error: "Could not authenticate user"});
+        } 
+    });
 }
 
 module.exports = constructorMethod;
