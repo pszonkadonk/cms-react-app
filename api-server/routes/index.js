@@ -103,6 +103,7 @@ const constructorMethod = (app) => {
             let username = xss(req.body.username);
             let password = xss(req.body.password);
             let administrator = req.body.administrator;
+            let biography = req.body.biography;
             if(administrator ==="") {
                 administrator = false;
             }
@@ -112,7 +113,8 @@ const constructorMethod = (app) => {
                 data: {
                     username: username,
                     password: password,
-                    administrator: administrator
+                    administrator: administrator,
+                    biography: biography
                 },
                 method: 'POST',
                 expectsResponse: true
@@ -160,6 +162,25 @@ const constructorMethod = (app) => {
             res.json({error: "Could not authenticate user"});
         } 
     });
+
+    app.get('/public/user-list', async (req, res) => {
+            console.log("in public user list");
+            let pageNumber = parseInt(req.query.page);
+            console.log(req.query);
+            let message = {
+                redis: redisConnection,
+                eventName: 'fetch-users-pageinate',
+                data: {
+                    pageNumber: pageNumber
+                },
+                method: 'GET',
+                expectsResponse: true
+            }
+            let response = await nprSender.sendMessage(message);
+            
+            res.json(response);
+    });
+
 
     //make user an administrator
     app.put('/make-administrator', async(req, res) => {

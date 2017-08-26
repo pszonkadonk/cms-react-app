@@ -2,6 +2,7 @@ const mongoCollections = require("../config/mongoCollections");
 const users = mongoCollections.users;
 const uuid = require("uuid");
 const bcrpyt = require("bcrypt-nodejs");
+const moment = require('moment');
 
 let exportedMethods = {
         getAllUsers() {
@@ -35,7 +36,7 @@ let exportedMethods = {
             });
         });
     },
-    addUser(username, password, administrator) {
+    addUser(username, password, administrator, biography) {
         if(username === '' || typeof(username) === 'undefined') {
             throw("Username invalid");
         }
@@ -56,7 +57,9 @@ let exportedMethods = {
                         username: username,
                         hashedPassword: hash,
                         administrator: administrator,
-                        favorites: []
+                        biography: biography,
+                        favorites: [],
+                        signupDate: moment().format('MM-DD-YYYY')
                     };
                     return userCollection.insertOne(newUser).then((insertedInfo) => {
                         return insertedInfo.insertedId;

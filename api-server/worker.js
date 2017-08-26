@@ -35,9 +35,10 @@ redisConnection.on("create-user:post:*", (message, channel) => {
     let username = message.data.username;
     let password = message.data.password;
     let administrator = message.data.administrator;
+    let biography = message.data.biography;
 
     // console.log(message);
-    users.addUser(username, password, administrator).then((newUser) => {
+    users.addUser(username, password, administrator, biography).then((newUser) => {
         if(newUser !== undefined) {
             // console.log("User created");
             redisConnection.emit(successEvent, {
@@ -98,6 +99,42 @@ redisConnection.on("fetch-users:get:*", (message, channel) => {
         });
     });
 
+
+
+redisConnection.on("fetch-users-pageinate:get:*", (message, channel) => {
+    
+        let requestId = message.requestId;
+        let eventName = message.eventName;
+    
+        let successEvent = `${eventName}:success:${requestId}`;
+        let failedEvent = `${eventName}:failed:${requestId}`;
+
+        let pageNumber = message.data.pageNumber;
+    
+        console.log(pageNumber);
+        console.log("You have reached fetch-users-pageinate:get");
+
+        return allUsers().then((userCollection) => {
+            return userCollection.find({}).skip(15*(pageNumber-1)).limit(15).toArray((err, response) => {
+                if(err) {
+                    let warning = "Could not get user collection";
+                    redisConnection.emit(failedEvent, {
+                        requestId: requestId,
+                        data: warning,
+                        eventName: eventName
+                    });
+                }
+                console.log(response);
+                redisConnection.emit(successEvent, {
+                    requestId: requestId,
+                    data: response,
+                    eventName: eventName
+                });
+            });
+        }); 
+    });
+
+    
 redisConnection.on("make-admin:put:*", (message, channel) => {
     
         let requestId = message.requestId;
