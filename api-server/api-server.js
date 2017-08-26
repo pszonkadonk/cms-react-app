@@ -31,8 +31,26 @@ bluebird.promisifyAll(redis.Multi.prototype);
 
 configRoutes(app);
 
+const activeUsers = [];
 
-app.listen(3001, () => {
+
+const server = app.listen(3001, () => {
     console.log("We've now got a server!");
     console.log("Your website is being run on http://localhost:3001");
 });
+
+//socket setup
+
+const io = socket(server);
+
+io.on('connection', (client) => {
+    console.log("connected!");
+    console.log(`Establish socket connection ${client.id}`);
+
+    client.on("loggedIn", (data) => {
+        console.log("DATA HAS BEEN PASSED");
+        console.log(data);
+    });
+
+});
+

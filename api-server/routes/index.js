@@ -54,7 +54,6 @@ const constructorMethod = (app) => {
         let decoded = jwtDecode(req.headers.authorization);
         let authenticatedUser = await users.getUserById(decoded.id);
         
-        console.log("i reached submit comment");
         let author = decoded.username;
 
 
@@ -84,13 +83,11 @@ const constructorMethod = (app) => {
     })
     app.get('/download/:fileName', async(req, res) => {
         
-        // console.log(req);
 
         let fileName = req.params.fileName;
         
         let filePath = path.join(__dirname, '..', '..', 'src', 'client', 'files', 'files_zipped', `${fileName}.zip`)
         
-        console.log(filePath)
 
 
         res.sendFile(filePath);
@@ -164,9 +161,7 @@ const constructorMethod = (app) => {
     });
 
     app.get('/public/user-list', async (req, res) => {
-            console.log("in public user list");
             let pageNumber = parseInt(req.query.page);
-            console.log(req.query);
             let message = {
                 redis: redisConnection,
                 eventName: 'fetch-users-pageinate',
@@ -212,7 +207,6 @@ const constructorMethod = (app) => {
         let authenticatedUser = await users.getUserById(decoded.id);
 
 
-        console.log("created structure")
         let structure = req.body
 
         if(authenticatedUser !== "undefined" && authenticatedUser.administrator) {
@@ -251,8 +245,6 @@ const constructorMethod = (app) => {
             }
 
             nprSender.sendMessage(message).then((response) => {
-                // console.log("RESPONSE in route path");
-                // console.log(response);
                 res.send(response);    
             }).catch((err) => {
                 res.json({error:"Could not get structure list"});
@@ -281,8 +273,6 @@ const constructorMethod = (app) => {
                 expectsResponse: true
             }
             nprSender.sendMessage(message).then((response) => {
-                console.log("RESPONSE in route path");
-                console.log(response);
                 res.send(response);    
             }).catch((err) => {
                 res.json({error:"Could not update structure"});
@@ -373,8 +363,6 @@ const constructorMethod = (app) => {
 
         let author = decoded.username;
 
-        console.log("BODY");
-        console.log(req.body);
 
         if(authenticatedUser !== "undefined" && authenticatedUser.administrator) {            
             let entryData = req.body.data.entryLog;
@@ -422,14 +410,10 @@ const constructorMethod = (app) => {
         let decoded = jwtDecode(req.headers.authorization);
         let authenticatedUser = await users.getUserById(decoded.id);
 
-        // console.log("Req")
-        // console.log(req);
 
         let entrySlug = req.body.entrySlug;
         let structureSlug = req.body.structureSlug;
 
-        console.log('req.photo')
-        console.log(req);
 
         // if(authenticatedUser !== "undefined" && authenticatedUser.administrator) {            
         //     let message = {
@@ -483,7 +467,6 @@ const constructorMethod = (app) => {
         let decoded = jwtDecode(req.headers.authorization);
         let authenticatedUser = await users.getUserById(decoded.id);
 
-        console.log(req.body);
 
         if(authenticatedUser !== "undefined" && authenticatedUser.administrator) {            
             let entryData = req.body.data.entryLog;
@@ -551,7 +534,6 @@ const constructorMethod = (app) => {
         let decoded = jwtDecode(req.headers.authorization);
         let authenticatedUser = await users.getUserById(decoded.id);
 
-        console.log(req.params);
         let structureSlug = req.params.structureSlug;
         let entrySlug = req.params.entrySlug;
 
@@ -584,8 +566,6 @@ const constructorMethod = (app) => {
 
         let author = decoded.username;
 
-        console.log("req.body.data");        
-        console.log(req.body.data);
         if(authenticatedUser !== "undefined" && authenticatedUser.administrator) {            
                        
             let message = {
@@ -625,8 +605,6 @@ const constructorMethod = (app) => {
         let userId = decoded.id
         
 
-        console.log("In Favorite")
-        console.log(req.body);
 
         if(authenticatedUser !== "undefined") {            
             let entrySlug = req.body.data.entrySlug;
@@ -665,8 +643,6 @@ const constructorMethod = (app) => {
         let user = decoded.username
         let userId = decoded.id
         
-        console.log("In Unfavorite")
-        console.log(req.body);
 
         if(authenticatedUser !== "undefined") {            
             let entrySlug = req.body.entrySlug;
