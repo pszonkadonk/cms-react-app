@@ -4,13 +4,17 @@ import React, { Component } from "react";
 const CommentList = (props) => { 
     console.log(props)    
         return (
-            <div>
-                <h4>I am a comment List</h4>
+            <div className="container">
+                <h4>Comment List</h4>
                 {props.userComments.map((comment) => (
-                    <div>
-                        <p>{comment.commentText}</p>
-                        <p>by {comment.author}</p>
-                        <p>on {comment.createdDate}</p>
+                    <div className="comment" >
+                        <div className="comment-detail">
+                            User: {comment.author}<br />
+                            On: {comment.createdDate}
+                        </div>
+                        <div className="comment-text">
+                            {comment.commentText}
+                        </div>
                     </div>
                 ))}
             </div>

@@ -10,15 +10,11 @@ class CommentContainer extends Component {
 
 
     }
-
-
     render() {
         return (
             <div>
                 <CommentList userComments={this.props.comments} />
             </div>   
-
-
         );
     }
 
