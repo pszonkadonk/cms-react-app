@@ -2,21 +2,31 @@ import React, { Component } from 'react';
 import ReactQuill from 'react-quill'; // ES6
 
 import theme from 'react-quill/dist/quill.snow.css';
+import renderHTML from 'react-render-html';
 
 class WysiwygEditor extends Component {
     constructor(props) {
-        super(props)
+        super(props);
+
         this.state = {
-            value: ''
-         } 
-      }
+            editorText: []
+        }
+    }
     
-    
-      render() {
+    render() {
         return (
-          <ReactQuill name={this.props.data.label} type="text" value={this.props.data.value} onChange={this.props.handleInput} />
-        )
-      }
+            <div className="form-group">
+                <h2>{this.props.data.label}</h2>
+                <div>
+                    {renderHTML(this.props.data.value)}
+                </div>
+                {/* {this.state.editorText.map((element) => (
+                    this.parseFields(element)
+                ))}             */}
+            </div>
+        )    
+    }
 }
+
 
 export default WysiwygEditor;

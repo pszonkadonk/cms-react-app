@@ -116,6 +116,7 @@ class AddStructurePage extends Component {
             return false;
         }
         else if(this.state.structureSlug.indexOf(" ") >=0 || this.state.structureName.indexOf(" ") >= 0) { //must have no spaces
+            console.log(this.state.structureSlug);
             console.log("failed because of slug spaces");
             return false;
         }

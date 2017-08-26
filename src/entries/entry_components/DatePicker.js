@@ -7,28 +7,19 @@ import 'react-datepicker/dist/react-datepicker.css';
 // CSS Modules, react-datepicker-cssmodules.css
 import 'react-datepicker/dist/react-datepicker-cssmodules.css';
 
-class DatePicker extends React.Component {
-  constructor (props) {
-    super(props)
-
-  }
-
-
-
-  render() {
- 
+const DatePicker = (props) => {
+    console.log(props)
     return (
         <div class="form-group">
-            <label>{this.props.data.label}</label>
+            <h4>{props.data.label}</h4>
             <ReactDatePicker
-            name={this.props.data.label}
-            selected={this.props.value}
-            onChange={this.props.handleInput}
+            name={props.data.label}
+            selected={moment(props.data.value)}
             />
         </div>
     )
-  }
 }
+
 
 export default DatePicker;
 

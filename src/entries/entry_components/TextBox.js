@@ -1,26 +1,14 @@
 import React, { Component } from 'react';
 
-class TextBox extends Component {
-    constructor(props) {
-        super(props);
+const TextBox = (props) => {
 
-        this.state = {
-            value: ""
-        }
-        console.log(this.props)
-        
-    }
+    return(
+        <div class='form-group'>
+            <h4>{props.data.label}</h4>
+            <p>{props.data.value}</p>
+        </div>
+    )
 
-
-
-    render() {
-        return(
-            <div className="form-group">
-                <label>{this.props.data.label}</label>
-                <input name={this.props.data.label} type="text" value={this.props.data.value} onChange={this.props.handleInput} />
-            </div>
-        )
-    }
-}
+};
 
 export default TextBox;

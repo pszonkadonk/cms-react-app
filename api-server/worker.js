@@ -557,6 +557,65 @@ redisConnection.on("update-entry:put:*", (message, channel) => {
         });            
     });
 
+    redisConnection.on("submit-comment:post:*", (message, channel) => {
+        
+             let requestId = message.requestId;
+             let eventName = message.eventName;
+        
+             let successEvent = `${eventName}:success:${requestId}`;
+             let failedEvent = `${eventName}:failed:${requestId}`;
+        
+             console.log("You have reached submit-comment:post");
+            
+             
+             let entrySlug = message.data.entrySlug;
+             let commentText = message.data.commentText;
+             let author = message.data.author;
+             let entryCollection = `${message.data.structureSlug}-entries`;// structure slug
+             let createdDate = message.data.createdDate;
 
-
-
+      
+             console.log("MESSAGE");
+             console.log(message.data);
+      
+             let commentSubmission = {
+                 _id: uuid.v4(),
+                 entrySlug: entrySlug,
+                 author: author,
+                 createdDate: createdDate,
+                 commentText: commentText
+             }
+      
+             dbConnection().then(db => {
+                 if(db !== undefined) { //make sure entry slug is uniqie
+                     db.collection(entryCollection)
+                         .update({entrySlug: entrySlug},
+                         { $push: {
+                             comments: commentSubmission
+                             }
+                         },
+                     (err, entry) => {
+                         console.log(entry);
+                         if(entry) {
+                             console.log("Added comment!");
+                             let message = "Added comment";
+                             redisConnection.emit(successEvent, {
+                                 requestId: requestId,
+                                 data: message,
+                                 eventName: eventName
+                             });                    
+                         }  
+                     });
+                 } else {
+                     let warning = "Could not add comment";
+                     redisConnection.emit(failedEvent, {
+                         requestId: requestId,
+                         data: warning,
+                         eventName: eventName
+                     });
+                 }
+             }).catch((err) => {
+                 console.log(err);
+             });
+         });
+     

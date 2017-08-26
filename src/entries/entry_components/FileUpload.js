@@ -1,19 +1,44 @@
 import React, { Component } from 'react';
-import Dropzone from 'react-dropzone';
+import FileDownload from 'react-file-download';
+
+import axios from 'axios';
+
 
 class FileUpload extends Component {
     constructor(props) {
-        super(props);
+        super(props)
+        
+        this.state = {
+            filePath: this.props.data.value
+        }
+
+        this.getFile = this.getFile.bind(this);        
     }
+
+
+    getFile(event) {
+        event.preventDefault();
+        let fileName = this.state.filePath.split('/')[4];
+        let fileNameZip = fileName + '.zip';
+        console.log(fileName);
+        axios.get(`/download/${fileName}`).then((response) => {
+            console.log(response);
+            FileDownload(response.data, fileNameZip )
+        })
+    }
+
     render() {
         return(
-            <Dropzone name={this.props.data.label} multiple={false} onDrop={this.props.dropFile} onChange={this.props.uploadFile}>
-                <h5>{this.props.data.label}</h5>
-                <p> Drop a photo, or click to add. </p>                
-            </Dropzone>
+            <div>
+                <form className="form-group">
+                    <h5>{this.props.data.label}</h5>
+                    <input type="submit" className="btn btn-primary" onClick={this.getFile} />
+                </form>
+            </div>
         );
     }
 }
+
 
 export default FileUpload;
 

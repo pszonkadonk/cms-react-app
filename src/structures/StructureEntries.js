@@ -101,4 +101,4 @@ class StructureEntries extends Component {
     }
 }
 
-export default StructureEntries
+export default StructureEntries;

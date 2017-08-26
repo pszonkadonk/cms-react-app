@@ -27,10 +27,7 @@ class ImageUpload extends Component {
     render() {
         return(
             <div class="form-group">
-            <Dropzone name={this.props.data.label} multiple={false} accept={'image/*'} onDrop={this.props.dropPhoto} onChange={this.props.changeThings}>
-                <h5>{this.props.data.label}</h5>
-                <p> Drop a photo, or click to add. </p>                
-            </Dropzone>
+            <h3>{this.props.data.label}</h3>
             {this.state.image ? (
                     <img src={this.state.image} style={{width: 200, height: 200}}/>
             ): (
@@ -45,5 +42,3 @@ class ImageUpload extends Component {
 export default ImageUpload;
 
 
-{/* <input type="file" name="image" />
-                    <input type="submit" className="btn btn-primary" /> */}

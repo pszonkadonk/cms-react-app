@@ -13,9 +13,31 @@ const nprSender = require('../js/nrp-sender-shim');
 const redis = require('redis');
 const client = redis.createClient();
 const multer = require('multer');
-const uploadDest = multer({ dest: '../src/client/pictures'});
-const uploadDestFile = multer({dest: '../src/client/files'});
 
+const storageImages = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, '../src/client/pictures')
+    },
+    filename: function (req, file, cb) {
+      cb(null, Date.now() + path.extname(file.originalname)) //Appending 
+    }
+  })
+
+  const storageFiles = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, '../src/client/files')
+    },
+    filename: function (req, file, cb) {
+      cb(null, Date.now() + path.extname(file.originalname)) //Appending 
+    }
+  })
+  
+
+const uploadDest = multer({ storage: storageImages});
+const uploadDestFile = multer({storage: storageFiles});
+const zip = require('adm-zip');
+const fs = require('fs');
+const path = require('path');
 
 bluebird.promisifyAll(redis.RedisClient.prototype);
 bluebird.promisifyAll(redis.Multi.prototype);
@@ -26,6 +48,54 @@ require('../passport-config/passport-strat.js')(passport, Strategy);
 
 
 const constructorMethod = (app) => {
+
+
+    app.post('/submit-comment', async(req, res) => {
+        let decoded = jwtDecode(req.headers.authorization);
+        let authenticatedUser = await users.getUserById(decoded.id);
+        
+        console.log("i reached submit comment");
+        let author = decoded.username;
+
+
+        if(authenticatedUser !== "undefined") {             
+            let message = {
+                redis: redisConnection,
+                eventName: 'submit-comment',
+                method: 'POST',
+                data: {
+                    commentText: req.body.data.commentText,
+                    entrySlug: req.body.data.entrySlug,
+                    structureSlug: req.body.data.structureSlug,
+                    author: author,
+                    createdDate: req.body.data.createdDate
+                },
+                expectsResponse: true
+            }
+            nprSender.sendMessage(message).then((response) => {
+                res.send(response);   
+            }).catch((err) => {
+                res.json({error:err});
+            });
+        }
+        else {
+            res.json({error: "Could not authenticate user"});
+        }
+    })
+    app.get('/download/:fileName', async(req, res) => {
+        
+        // console.log(req);
+
+        let fileName = req.params.fileName;
+        
+        let filePath = path.join(__dirname, '..', '..', 'src', 'client', 'files', 'files_zipped', `${fileName}.zip`)
+        
+        console.log(filePath)
+
+
+        res.sendFile(filePath);
+        
+    });        
 
     // register user
     app.post('/register',
@@ -121,6 +191,7 @@ const constructorMethod = (app) => {
         let authenticatedUser = await users.getUserById(decoded.id);
 
 
+        console.log("created structure")
         let structure = req.body
 
         if(authenticatedUser !== "undefined" && authenticatedUser.administrator) {
@@ -251,6 +322,29 @@ const constructorMethod = (app) => {
         });
     });
 
+    //get particular entry 
+    app.get('/public/:structureSlug/:entrySlug', async(req, res) => {
+
+        let structureSlug = req.params.structureSlug;
+        let entrySlug = req.params.entrySlug;
+
+        let message = {
+            redis: redisConnection,
+            eventName: 'structure-entry',
+            method: 'GET',
+            data: {
+                entrySlug: entrySlug,
+                structureSlug: structureSlug
+            },
+            expectsResponse: true
+        }
+        nprSender.sendMessage(message).then((response) => {
+            res.send(response);    
+        }).catch((err) => {
+            res.json({error:"Could not remove entry"});
+        });
+    });
+
     // post new entry
     app.post('/submit-entry', async(req, res) => {
         let decoded = jwtDecode(req.headers.authorization);
@@ -344,11 +438,21 @@ const constructorMethod = (app) => {
 
     //upload file
     app.post('/upload-file', uploadDestFile.single('file'), async(req, res) => {
-        console.log("hello frmo upload file");
         let decoded = jwtDecode(req.headers.authorization);
         let authenticatedUser = await users.getUserById(decoded.id);
 
+        let zipper = new zip();
+    
+        let localFilePath = path.join(__dirname, '..', '..', 'src', 'client', 'files', `${req.file.filename}`)
+        
+        let zipFilePath = path.join(__dirname, '..', '..', 'src', 'client', 'files_zipped', `${req.file.filename}.zip`)
 
+        zipper.addLocalFile(localFilePath);
+        
+        // zipper.addLocalFile(`/Users/pszonkadonk/Documents/Stevens/cms-react-app/src/client/${req.file.filname}`);
+
+        zipper.writeZip(zipFilePath);
+        
         res.send(req.file);
 
     });
@@ -430,7 +534,6 @@ const constructorMethod = (app) => {
         let structureSlug = req.params.structureSlug;
         let entrySlug = req.params.entrySlug;
 
-
         if(authenticatedUser !== "undefined" && authenticatedUser.administrator) {
             let message = {
                 redis: redisConnection,
@@ -490,6 +593,9 @@ const constructorMethod = (app) => {
             res.json({error: "Could not authenticate user"});
         } 
     });
+
+
+
 }
 
 module.exports = constructorMethod;

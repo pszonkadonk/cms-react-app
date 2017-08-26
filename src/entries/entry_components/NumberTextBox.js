@@ -1,18 +1,13 @@
 import React, { Component } from 'react';
 
-class NumberTextBox extends Component {
-    constructor(props) {
-        super(props);
-    }
-    render() {
-        console.log(this.props);
-        return(
-            <div className="form-group">
-                <label>{this.props.data.label}</label>
-                <input name={this.props.data.label} type="number" value={this.props.data.value} onChange={this.props.handleInput} />
-            </div>
+const NumberTextBox = (props) => {
+    return(
+        <div className="form-group">
+            <h4>{props.data.label}</h4>
+            <p>{props.data.value}</p>
+        </div>
         )
-    }
 }
+
 
 export default NumberTextBox;
