@@ -9,6 +9,7 @@ const users = require('./data/users');
 const structures = require('./data/structures');
 const mongoCollections = require("./config/mongoCollections");
 const dbConnection = require("./config/mongoConnection");
+const allUsers = mongoCollections.users;
 const uuid = require('uuid');
 
 
@@ -618,4 +619,143 @@ redisConnection.on("update-entry:put:*", (message, channel) => {
                  console.log(err);
              });
          });
-     
+
+
+
+    redisConnection.on("unfavorite-entry:delete:*", (message, channel) => {
+
+            let requestId = message.requestId;
+            let eventName = message.eventName;
+
+            let successEvent = `${eventName}:success:${requestId}`;
+            let failedEvent = `${eventName}:failed:${requestId}`;
+
+            console.log("You have reached favorite-entry:delete");
+        
+            
+            let entrySlug = message.data.entrySlug;
+            let structureSlug = message.data.structureSlug;
+            let user = message.data.user;
+            let userId = message.data.id;
+
+            console.log("MESSAGE");
+            console.log(message.data);
+
+            return allUsers().then((userCollection) => {
+                return userCollection.update({_id: userId}, {
+                    $pull: {
+                        favorites: {entrySlug: entrySlug}
+                    }
+                }).then((response) => {
+                    if(!response) {
+                        let warning = "Could not unfavorite entry";
+                        redisConnection.emit(failedEvent, {
+                            requestId: requestId,
+                            data: warning,
+                            eventName: eventName
+                        });
+                    }
+                    let message = "UnfavoritedFavorited Entry";
+                    redisConnection.emit(successEvent, {
+                        requestId: requestId,
+                        data: message,
+                        eventName: eventName
+                    });                    
+                });
+            });
+        });
+
+    redisConnection.on("favorite-entry:post:*", (message, channel) => {
+        
+        let requestId = message.requestId;
+        let eventName = message.eventName;
+
+        let successEvent = `${eventName}:success:${requestId}`;
+        let failedEvent = `${eventName}:failed:${requestId}`;
+
+        console.log("You have reached submit-comment:post");
+    
+        
+        let entrySlug = message.data.entrySlug;
+        let structureSlug = message.data.structureSlug;
+        let user = message.data.user;
+        let userId = message.data.id;
+        let entryCollection = message.data.entryCollection; //structure slug
+
+
+        console.log("MESSAGE");
+        console.log(message.data);
+
+        let favoriteKeyValuePair = {
+            entrySlug: entrySlug,
+            structureSlug: structureSlug,
+            entryCollection: entryCollection
+        }
+
+        return allUsers().then((userCollection) => {
+            console.log(userCollection);
+            return userCollection.update({_id: userId}, {
+                $push: {
+                    favorites: favoriteKeyValuePair
+                }
+            }).then((response) => {
+                console.log(response);
+                if(!response) {
+                    let warning = "Could not favorite entry";
+                    redisConnection.emit(failedEvent, {
+                        requestId: requestId,
+                        data: warning,
+                        eventName: eventName
+                    });
+                }
+                let message = "Favorited Entry";
+                redisConnection.emit(successEvent, {
+                    requestId: requestId,
+                    data: message,
+                    eventName: eventName
+                });                    
+            });
+        });
+    });
+        
+
+    redisConnection.on("retrieve-userData:get:*", (message, channel) => {
+        
+        let requestId = message.requestId;
+        let eventName = message.eventName;
+
+        let successEvent = `${eventName}:success:${requestId}`;
+        let failedEvent = `${eventName}:failed:${requestId}`;
+
+        console.log("You have reached retrieve-userData:get");
+    
+        let user = message.data.username;
+        let userId = message.data.userId;
+
+        console.log("MESSAGE");
+        console.log(message.data);
+
+        users.getUserById(userId).then((user) => {
+            if(!user) {
+                let warning = "Could not find user";
+                redisConnection.emit(failedEvent, {
+                    requestId: requestId,
+                    data: warning,
+                    eventName: eventName
+                });        
+            }
+
+            let userReturnPayload = {
+                id: user._id,
+                username: user.username,
+                favorites: user.favorites
+            }
+            redisConnection.emit(successEvent, {
+                requestId: requestId,
+                data: userReturnPayload,
+                eventName: eventName
+            });                    
+        });
+    });
+        
+        

@@ -55,7 +55,8 @@ let exportedMethods = {
                         _id: uuid.v4(),
                         username: username,
                         hashedPassword: hash,
-                        administrator: administrator
+                        administrator: administrator,
+                        favorites: []
                     };
                     return userCollection.insertOne(newUser).then((insertedInfo) => {
                         return insertedInfo.insertedId;

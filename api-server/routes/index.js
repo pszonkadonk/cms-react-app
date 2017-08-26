@@ -595,6 +595,117 @@ const constructorMethod = (app) => {
     });
 
 
+    //favorite entry
+    app.post('/favorite', async(req, res) => {
+        let decoded = jwtDecode(req.headers.authorization);
+        let authenticatedUser = await users.getUserById(decoded.id);
+
+        let user = decoded.username
+        let userId = decoded.id
+        
+
+        console.log("In Favorite")
+        console.log(req.body);
+
+        if(authenticatedUser !== "undefined") {            
+            let entrySlug = req.body.data.entrySlug;
+            let structureSlug = req.body.data.structures;
+            let entryCollection = `${req.body.data.structures}-entries`        
+            
+            let message = {
+                redis: redisConnection,
+                eventName: 'favorite-entry',
+                method: 'POST',
+                data: {
+                    entryCollection: entryCollection,
+                    entrySlug: entrySlug,
+                    structureSlug: structureSlug,
+                    user: user,
+                    id: userId
+                },
+                expectsResponse: true
+            }
+            nprSender.sendMessage(message).then((response) => {
+                res.send(response);    
+            }).catch((err) => {
+                res.json({error:err});
+            });
+        }
+        else {
+            res.json({error: "Could not authenticate user"});
+        } 
+    });
+
+    //unfavorite entryr
+    app.delete('/unfavorite', async(req, res) => {
+        let decoded = jwtDecode(req.headers.authorization);
+        let authenticatedUser = await users.getUserById(decoded.id);
+
+        let user = decoded.username
+        let userId = decoded.id
+        
+        console.log("In Unfavorite")
+        console.log(req.body);
+
+        if(authenticatedUser !== "undefined") {            
+            let entrySlug = req.body.entrySlug;
+            let structureSlug = req.body.structures;
+            let entryCollection = `${req.body.structures}-entries`        
+            
+            let message = {
+                redis: redisConnection,
+                eventName: 'unfavorite-entry',
+                method: 'DELETE',
+                data: {
+                    entryCollection: entryCollection,
+                    entrySlug: entrySlug,
+                    structureSlug: structureSlug,
+                    user: user,
+                    id: userId
+                },
+                expectsResponse: true
+            }
+            nprSender.sendMessage(message).then((response) => {
+                res.send(response);    
+            }).catch((err) => {
+                res.json({error:err});
+            });
+        }
+        else {
+            res.json({error: "Could not authenticate user"});
+        } 
+    });
+
+
+    app.get("/users", async(req, res) => {
+        let decoded = jwtDecode(req.headers.authorization);
+        let authenticatedUser = await users.getUserById(decoded.id);
+
+        let user = decoded.username
+        let userId = decoded.id
+
+        if(authenticatedUser !== "undefined") {            
+            
+            let message = {
+                redis: redisConnection,
+                eventName: 'retrieve-userData',
+                method: 'GET',
+                data: {
+                    username: user,
+                    userId: userId
+                },
+                expectsResponse: true
+            }
+            nprSender.sendMessage(message).then((response) => {
+                res.send(response);    
+            }).catch((err) => {
+                res.json({error:err});
+            });
+        }
+        else {
+            res.json({error: "Could not authenticate user"});
+        } 
+    });
 
 }
 
