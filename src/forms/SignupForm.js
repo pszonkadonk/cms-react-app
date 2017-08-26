@@ -9,13 +9,15 @@ class SignupForm extends Component {
             username: "",
             password: "",
             passwordConfirmation: "",
-            administrator: false
+            administrator: false,
+            biography: ""
         }        
         this.handleUsernameChange= this.handleUsernameChange.bind(this);
         this.handlePasswordChange= this.handlePasswordChange.bind(this);
         this.handlePasswordConfirmationChange= this.handlePasswordConfirmationChange.bind(this);
         this.handleAdministrator = this.handleAdministrator.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleBiography = this.handleBiography.bind(this);
         
     }
 
@@ -41,6 +43,11 @@ class SignupForm extends Component {
         })
     }
 
+    handleBiography(event) {
+        this.setState({
+            biography: event.target.value
+        });
+    }
     handleSubmit(event) {
         event.preventDefault();
         if(this.state.username === '' || this.state.password === '') {
@@ -55,7 +62,8 @@ class SignupForm extends Component {
         const signupPayLoad = {
             username: this.state.username,
             password: this.state.password,
-            administrator: this.state.administrator
+            administrator: this.state.administrator,
+            biography: this.state.biography
         }
         axios.post("/register", signupPayLoad).then((response) => {
 
@@ -85,6 +93,10 @@ class SignupForm extends Component {
                            <div className="form-group">
                                 <label htmlFor="passwordConfirmation">Password Confirmation</label>
                                 <input type="password" className="form-control" id="passwordConfirmation" placeholder="Password Confirmation" value={this.state.passwordConfirmation} onChange={this.handlePasswordConfirmationChange}  />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="biography">Biography</label>
+                                <input type="text" className="form-control" id="biography" placeholder="Tell us a little about yourself" value={this.state.biography} onChange={this.handleBiography}  />
                             </div>
                             <div className="form-check">
                                 <label className="form-check-label">

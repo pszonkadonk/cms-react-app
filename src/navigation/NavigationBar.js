@@ -62,6 +62,10 @@ class NavigationBar extends Component {
                         <li className="nav-item active nav-link">
                             <NavLink activeClassName="active" to="/structures">Structure List</NavLink>
                         </li>
+                        <li className="nav-item active nav-link">
+                            <NavLink activeClassName="active" to="/users?page=1">User List</NavLink>
+                        </li>
+
                         {localStorage.administrator === "true" ? (
                             <li className="nav-item active nav-link">
                                 <NavLink activeClassName="active" to="/admin">Admin Panel</NavLink>

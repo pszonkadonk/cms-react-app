@@ -12,7 +12,7 @@ img {
     height: 120px;
 }
 
-.comment {
+.comment, .user-listing {
     background-color: navy;
     border-bottom-width: 5px;
     border-bottom-color: white;
@@ -20,10 +20,18 @@ img {
     margin: 25px;
 }
 
-.comment-detail {
+.comment-detail, .user-listing {
     color: white;
 }
 
-.comment-text {
+.user-listing ul {
+    list-style-type: none;
+}
+
+.comment-text,  {
     background-color: white;
+}
+
+.table th {
+    text-align: center;
 }

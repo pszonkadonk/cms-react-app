@@ -294,10 +294,14 @@ class EntryViewContainer extends Component {
                     this.parseFields(element)
                     ))}     
                 </div>  
-                {this.state.userFavorited === false || this.state.userFavorited === null ? (
+                {this.state.isLoggedIn === true ? (
+                    this.state.userFavorited === false || this.state.userFavorited === null ? (
                     <button className="btn btn-success" onClick={this.favoriteEntry}>Favorite</button>
-                ) : (
+                    ) : (
                     <button className="btn btn-danger" onClick={this.unfavoriteEntry}>Unfavorite</button>
+                )
+                ): (
+                    <p></p>
                 )
                 }
                 <CommentContainer comments={this.state.comments}/>

@@ -16,6 +16,8 @@ import StructureListNonAdmin from './structures/StructureListNonAdmin';
 import StructureEntriesNonAdmin from './structures/StructureEntriesNonAdmin';
 import EntryViewContainer from './entries/EntryViewContainer';
 
+import UserListNonAdmin from'./user/UserListNonAdmin.js';
+
 
 import Home from './home/Home.js';
 
@@ -45,6 +47,7 @@ class App extends Component {
             <Route path="/signup" component={SignupForm} />
             <Route path="/login" render={(props) => (<LoginForm {...props} />)} />
             <Route exact path="/structures/" component={StructureListNonAdmin} />
+            <Route path="/users" component={UserListNonAdmin} />
             <Route exact path="/structures/:structureSlug/list" component={StructureEntriesNonAdmin} />
             <Route path="/structures/:structureSlug/list/:entrySlug" component={EntryViewContainer} />
           </div> 
