@@ -14,6 +14,7 @@ export class StructureEntriesListNonAdminSearch extends Component {
             page: "1",
             structureEntries: []
         }
+        console.log(this.props);
         this.getStructureList = this.getStructureList.bind(this);
         this.viewEntry = this.viewEntry.bind(this);
     }
@@ -47,8 +48,11 @@ export class StructureEntriesListNonAdminSearch extends Component {
         });
     }
 
-    viewEntry() {
-
+    viewEntry(event) {
+        let entrySlug = event.target.value;
+        this.props.history.push({
+            pathname: `/structures/${this.state.structureSlug}/list/${entrySlug}`
+        }); 
     }
 
     render() {
