@@ -4,7 +4,7 @@ import axios from 'axios';
 import setAuthorizationToken from "../utils/setAuthorizationToken.js";
 import StructureEntries from './StructureEntries.js';
 
-export class  StructureListNonAdmin extends Component {
+export class StructureListNonAdmin extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -12,6 +12,7 @@ export class  StructureListNonAdmin extends Component {
         }
 
         this.getStructureList = this.getStructureList.bind(this);
+        this.viewFavorites = this.viewFavorites.bind(this);        
     }
 
 
@@ -42,8 +43,17 @@ export class  StructureListNonAdmin extends Component {
         });
     }
 
+    viewFavorites(event) {
+        let structureSlug = event.target.value;
+        this.props.history.push({
+            pathname: `/structures/${structureSlug}/favorites`,
+            structureSlug: structureSlug
+        });
+    }
+
 
     render() {
+        console.log(this.state)
         return (
             <div>
                 <h1>Structure Count: {this.state.structureListing.length}</h1>
@@ -52,6 +62,7 @@ export class  StructureListNonAdmin extends Component {
                     <tr>
                         <th>Structure Name</th>
                         <th>Description</th> 
+                        <th>Favorites</th> 
                         <th>Entries</th> 
                     </tr>
                     </thead>
@@ -60,6 +71,7 @@ export class  StructureListNonAdmin extends Component {
                             <tr key={element.key}>
                                 <td key={element.key}>{element.name}</td>
                                 <td key={element.key}>{element.description}</td>
+                                <td key={element.key}><button className="btn btn-primary" onClick={this.viewFavorites} value={element.slug}>See Favorites</button></td>
                                 <td key={element.key}><button className="btn btn-info" onClick={() => this.handleRedirectEntryList(element)} value={element.slug}>See Entries</button></td>
                             </tr>
                         )}  

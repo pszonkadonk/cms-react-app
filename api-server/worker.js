@@ -794,5 +794,53 @@ redisConnection.on("update-entry:put:*", (message, channel) => {
             });                    
         });
     });
+     
+    redisConnection.on("retrieve-favorites:get:*", (message, channel) => {
         
+        let requestId = message.requestId;
+        let eventName = message.eventName;
+
+        let successEvent = `${eventName}:success:${requestId}`;
+        let failedEvent = `${eventName}:failed:${requestId}`;
+
+        console.log("You have reached retrieve-favorites:get");
+
+        console.log("MESSAGE");
+        console.log(message.data);
+
+    
+        let structureSlug = message.data.structureSlug;
+
+        users.getAllUsers().then((userCollection) => {
+            let userWithFilteredFavs = [];
+            userCollection.filter((element) => {
+                let filteredFavs = []                      
+                console.log("ELEMENT FAVORITES");
+                console.log(element.favorites);
+                
+                for(let i = 0; i < element.favorites.length; i++) {
+
+                    if(element.favorites[i].structureSlug === structureSlug) {
+                        console.log('appending');
+                        filteredFavs.push(element.favorites[i]);
+                    }
+                }
+
+                if(filteredFavs.length !== 0) {
+                    let filteredUsers = {
+                        username: element.username,
+                        filteredFavs: filteredFavs 
+                    }
+                    userWithFilteredFavs.push(filteredUsers);
+                }
+                return userWithFilteredFavs;
+            });
+            redisConnection.emit(successEvent, {
+                requestId: requestId,
+                data: userWithFilteredFavs,
+                eventName: eventName
+            });                    
         
+        });
+    });
+

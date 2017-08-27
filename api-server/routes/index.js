@@ -50,6 +50,28 @@ require('../passport-config/passport-strat.js')(passport, Strategy);
 const constructorMethod = (app) => {
 
 
+
+    app.get("/retrieve-favorites/:structureSlug", async(req, res) => {
+        
+        let structureSlug = req.params.structureSlug;
+        
+        let message = {
+            redis: redisConnection,
+            eventName: 'retrieve-favorites',
+            method: 'GET',
+            data: {
+                structureSlug: structureSlug
+            },
+            expectsResponse: true
+        }
+        nprSender.sendMessage(message).then((response) => {
+            res.send(response);    
+        }).catch((err) => {
+            res.json({error:err});
+        });
+        
+    });
+
     app.post('/submit-comment', async(req, res) => {
         let decoded = jwtDecode(req.headers.authorization);
         let authenticatedUser = await users.getUserById(decoded.id);
@@ -703,6 +725,12 @@ const constructorMethod = (app) => {
             res.json({error: "Could not authenticate user"});
         } 
     });
+
+
+
+
+
+
 
 }
 

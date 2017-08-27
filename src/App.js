@@ -17,17 +17,28 @@ import StructureEntriesNonAdmin from './structures/StructureEntriesNonAdmin';
 import EntryViewContainer from './entries/EntryViewContainer';
 
 import UserListNonAdmin from'./user/UserListNonAdmin.js';
+import UserFavoriteList from'./user/UserFavoriteList.js';
 
 
 import Home from './home/Home.js';
 
 import styles from "./styles.css"
 
+const io = require('socket.io-client')
+const socket = io('http://localhost:3001');
+
 class App extends Component {
 
       constructor(props) {
-        super(props);
+        super(props);        
     }
+
+    componentDidMount() {
+      let jwtToken = localStorage.jwtToken;
+        socket.emit('loggedIn', {
+            token: jwtToken                    
+        });    
+      }
     
 
   render() {
@@ -47,6 +58,7 @@ class App extends Component {
             <Route path="/signup" component={SignupForm} />
             <Route path="/login" render={(props) => (<LoginForm {...props} />)} />
             <Route exact path="/structures/" component={StructureListNonAdmin} />
+            <Route exact path="/structures/:structureSlug/favorites" component={UserFavoriteList} />
             <Route path="/users" component={UserListNonAdmin} />
             <Route exact path="/structures/:structureSlug/list" component={StructureEntriesNonAdmin} />
             <Route path="/structures/:structureSlug/list/:entrySlug" component={EntryViewContainer} />

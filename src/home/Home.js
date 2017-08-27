@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import StructureTile from './StructureTile';
 import axios from 'axios';
-
 import StructureEntriesNonAdmin from '../structures/StructureEntriesNonAdmin';
-
 import { ReactRouter, BrowserRouter as Router, Route, Link, NavLink } from 'react-router-dom';
+const io = require('socket.io-client')
+const socket = io('http://localhost:3001');
+
 
 
 class Home extends Component {
@@ -21,7 +22,26 @@ class Home extends Component {
 
     componentWillMount() {
         this.getStructureList()
+        
     }
+
+    componentDidMount() {
+  
+    }
+            
+    
+        
+        
+        // socket.on('connection', () => {        
+        //     var interval = setInterval(function() {
+        //         if(localStorage.jwtToken) {
+        //             socket.emit("loggedIn", {
+        //                 token: jwtToken
+        //             });
+        //         }
+                
+        //     }, 50000);
+    
 
     getStructureList() {
         axios.get('/structure-list').then((response) => {

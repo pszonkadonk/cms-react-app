@@ -7,6 +7,9 @@ const nprSender = require('./js/nrp-sender-shim');
 const redisConnection = require("./js/redis-connection");
 const redis = require('redis');
 const client = redis.createClient();
+const jwtDecode = require('jwt-decode');
+const users = require('./data/users');
+
 
 
 const passport = require("passport");
@@ -31,7 +34,7 @@ bluebird.promisifyAll(redis.Multi.prototype);
 
 configRoutes(app);
 
-const activeUsers = [];
+
 
 
 const server = app.listen(3001, () => {
@@ -43,14 +46,53 @@ const server = app.listen(3001, () => {
 
 const io = socket(server);
 
+let activeUsers = [];
 io.on('connection', (client) => {
-    console.log("connected!");
-    console.log(`Establish socket connection ${client.id}`);
+    // console.log(`Establish socket connection ${client.id}`);
 
-    client.on("loggedIn", (data) => {
-        console.log("DATA HAS BEEN PASSED");
-        console.log(data);
+    client.on("loggedIn", async (data) => {
+        // console.log('logged in socket got called');
+        let authenticatedUser;
+        if(data.token !== undefined) {
+            let decoded = jwtDecode(data.token);            
+            authenticatedUser = await users.getUserById(decoded.id);
+        }
+
+        let connectedUser = {
+            socketId: client.id,
+            id: authenticatedUser._id,
+            username: authenticatedUser.username
+        };
+
+        let redundantUser = activeUsers.find((element) => {
+            return element.username === connectedUser.username
+        })
+
+        if(redundantUser === undefined) {
+            console.log("appending to activeUsers");
+            activeUsers.push(connectedUser);
+        }
+
+        console.log(activeUsers);
+    });
+
+    client.on('userFavoriteList', (data) => {
+
+        console.log('ACTIVE USERS');
+        console.log(activeUsers);
+
+        io.sockets.emit('userFavoriteList', {
+            activeUsers: activeUsers
+        });
+    });
+
+    client.on('disconnect', (data) => {
+        activeUsers = activeUsers.filter((element) => { //remove disconnected from active user list
+            return element.socketId !== client.id;
+        });
     });
 
 });
+
+
 
