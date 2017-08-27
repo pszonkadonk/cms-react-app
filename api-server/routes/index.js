@@ -50,11 +50,31 @@ require('../passport-config/passport-strat.js')(passport, Strategy);
 const constructorMethod = (app) => {
 
 
-
+    app.get('/structure-entry-search/:structureSlug', async(req, res) => {
+        
+                let structureSlug = req.params.structureSlug;
+                let pageNumber = parseInt(req.query.page);
+        
+                let message = {
+                    redis: redisConnection,
+                    eventName: 'structure-entries-search',
+                    method: 'GET',
+                    data: {
+                        slug: structureSlug,
+                        pageNumber: req.query.page
+                    },
+                    expectsResponse: true
+                }
+                nprSender.sendMessage(message).then((response) => {
+                    res.send(response);    
+                }).catch((err) => {
+                    res.json({error:"Could not get entries"});
+                });
+            });
+        
     app.get("/retrieve-favorites/:structureSlug", async(req, res) => {
         
         let structureSlug = req.params.structureSlug;
-        
         let message = {
             redis: redisConnection,
             eventName: 'retrieve-favorites',
@@ -65,6 +85,8 @@ const constructorMethod = (app) => {
             expectsResponse: true
         }
         nprSender.sendMessage(message).then((response) => {
+            console.log('response');
+            console.log(response);
             res.send(response);    
         }).catch((err) => {
             res.json({error:err});
@@ -108,7 +130,7 @@ const constructorMethod = (app) => {
 
         let fileName = req.params.fileName;
         
-        let filePath = path.join(__dirname, '..', '..', 'src', 'client', 'files', 'files_zipped', `${fileName}.zip`)
+        let filePath = path.join(__dirname, '..', '..', 'src', 'client', 'files_zipped', `${fileName}.zip`)
         
 
 
@@ -476,7 +498,6 @@ const constructorMethod = (app) => {
 
         zipper.addLocalFile(localFilePath);
         
-        // zipper.addLocalFile(`/Users/pszonkadonk/Documents/Stevens/cms-react-app/src/client/${req.file.filname}`);
 
         zipper.writeZip(zipFilePath);
         
@@ -725,6 +746,9 @@ const constructorMethod = (app) => {
             res.json({error: "Could not authenticate user"});
         } 
     });
+
+
+
 
 
 

@@ -24,25 +24,7 @@ class Home extends Component {
         this.getStructureList()
         
     }
-
-    componentDidMount() {
-  
-    }
-            
-    
-        
-        
-        // socket.on('connection', () => {        
-        //     var interval = setInterval(function() {
-        //         if(localStorage.jwtToken) {
-        //             socket.emit("loggedIn", {
-        //                 token: jwtToken
-        //             });
-        //         }
-                
-        //     }, 50000);
-    
-
+       
     getStructureList() {
         axios.get('/structure-list').then((response) => {
             if(response === "undefined" || response.data.error)  {

@@ -30,7 +30,7 @@ class UserListNonAdmin extends Component {
             });
         }
 
-    sortFavorites(a,b) {
+    sortFavorites(a,b) {   //code from stack overflow
         if (a.structureSlug < b.structureSlug)
           return -1;
         if (a.structureSlug > b.structureSlug)

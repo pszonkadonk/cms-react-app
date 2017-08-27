@@ -11,6 +11,8 @@ import EditEntryContainer from '../entries/EditEntryContainer.js';
 
 import UserList from '../user/UserList';
 
+import StructureEntriesListNonAdminSearch from '../structures/StructureEntriesListNonAdminSearch';
+
 
 
 
@@ -30,7 +32,7 @@ const AdminRoutes = () => {
                     <Route exact path="/admin/structures/:slug/list" component={StructureEntries} /> 
                     <Route exact path="/admin/structures/:slug/:entrySlug" component={EditEntryContainer} /> 
                     <Route path='/admin/structures' component={StructureList}/>
-                    <Route exact path='/admin/users' component={UserList}/>
+                    <Route exact path='/admin/users' component={UserList}/>                           
                 </Switch>
             </div>
         </Router>

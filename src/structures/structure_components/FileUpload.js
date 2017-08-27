@@ -9,7 +9,7 @@ class FileUpload extends Component {
         return(
             <Dropzone name={this.props.data.label} multiple={false} onDrop={this.props.dropFile} onChange={this.props.uploadFile}>
                 <h5>{this.props.data.label}</h5>
-                <p> Drop a photo, or click to add. </p>                
+                <p> Drop a file, or click to add. </p>                
             </Dropzone>
         );
     }

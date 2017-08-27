@@ -32,7 +32,7 @@ class FileUpload extends Component {
             <div>
                 <form className="form-group">
                     <h5>{this.props.data.label}</h5>
-                    <input type="submit" className="btn btn-primary" onClick={this.getFile} />
+                    <input type="submit" className="btn btn-primary" onClick={this.getFile} value="Download File"/>
                 </form>
             </div>
         );

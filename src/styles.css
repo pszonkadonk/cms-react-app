@@ -28,8 +28,8 @@ img {
     list-style-type: none;
 }
 
-.comment-text,  {
-    background-color: white;
+.comment-text {
+    color: white;
 }
 
 .table th {

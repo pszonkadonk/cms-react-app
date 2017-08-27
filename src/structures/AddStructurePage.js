@@ -115,11 +115,6 @@ class AddStructurePage extends Component {
             console.log("failed because of skgu");
             return false;
         }
-        else if(this.state.structureSlug.indexOf(" ") >=0 || this.state.structureName.indexOf(" ") >= 0) { //must have no spaces
-            console.log(this.state.structureSlug);
-            console.log("failed because of slug spaces");
-            return false;
-        }
         else if(this.state.structureDescription === "undefined" || this.state.structureDescription === "") {
             console.log("failed because of decsription");
             return false;

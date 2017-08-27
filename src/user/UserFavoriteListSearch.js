@@ -3,21 +3,27 @@ import axios from 'axios';
 import setAuthorizationToken from "../utils/setAuthorizationToken.js";
 const io = require('socket.io-client')
 const socket = io('http://localhost:3001');
+const queryString = require('query-string');
 
 
 
-class UserFavoriteList extends Component {
+class UserFavoriteListSearch extends Component {
     constructor(props) {
         super(props)
         this.state = {
+            structureSlug: "",
+            page: "",
             users: []
         };
-        // this.fetchFavorites = this.fetchFavorites.bind(this);
     }
 
-    componentDidMount() {
-        // this.fetchFavorites();     
-
+    componentWillMount() {
+        let parsedUrlQuery = queryString.parse(this.props.location.search);
+        this.setState({
+            page: parsedUrlQuery.page,
+            structureSlug: this.props.match.params.structure
+        });
+        
         let jwtToken = localStorage.jwtToken;
         socket.emit('loggedIn', {
             token: jwtToken                    
@@ -29,9 +35,9 @@ class UserFavoriteList extends Component {
             console.log("USERS");
             console.log(users);
 
-            axios.get(`/retrieve-favorites/${this.props.match.params.structureSlug}`).then((response) => {
+            axios.get(`/retrieve-favorites/${this.state.structureSlug}`).then((response) => {
                 console.log("response");
-                console.log(response.data);
+                console.log(response);
 
                 if(response.data.error) {
                     alert(response.data.error);
@@ -62,31 +68,34 @@ class UserFavoriteList extends Component {
 
     render() {
         return(
-            <div>
-                <h2>Favorites for {this.props.match.params.structureSlug}</h2>
-                <table className="table">
-                    <thead>
-                    <tr>
-                        <th>User</th>
-                        <th>Entry</th> 
-                    </tr>
-                    </thead>
-                    {this.state.users.map(element =>
-                    <tbody>
-                        {element.filteredFavs.map(fav =>
-                            <tr>
-                                <td>{element.username}</td>
-                                <td>{fav.entrySlug}</td>              
-                            </tr>
-                            )}
-                    </tbody>          
-                        )}  
+        <div>
+            <h3>Search User Favorite List</h3>
+            <h2>Favorites for {this.state.structureSlug}</h2>
+            <table className="table">
+                <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Entry</th> 
+                </tr>
+                </thead>
+                {this.state.users.map(element =>
+                <tbody>
+                    {element.filteredFavs.map(fav =>
+                        <tr>
+                            <td>{element.username}</td>
+                            <td>{fav.entrySlug}</td>              
+                        </tr>
+                        )}
+                </tbody>          
+                    )}  
             </table>
-        </div>
+            </div> 
         )
     }
 }
 
 
-export default UserFavoriteList;
+export default UserFavoriteListSearch;
+
+
 

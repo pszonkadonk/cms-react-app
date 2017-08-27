@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-import { ReactRouter, BrowserRouter as Router, Route, Link, NavLink, Redirect } from 'react-router-dom';
+import { ReactRouter, BrowserRouter as Router, Route, Link, NavLink, Redirect, Switch } from 'react-router-dom';
 
 
 import NavigationBar from './navigation/NavigationBar.js';
@@ -14,10 +14,15 @@ import AuthorizationErrorPage from './error/AuthorizationErrorPage.js';
 
 import StructureListNonAdmin from './structures/StructureListNonAdmin';
 import StructureEntriesNonAdmin from './structures/StructureEntriesNonAdmin';
+import StructureEntriesListNonAdminSearch from './structures/StructureEntriesListNonAdminSearch';
 import EntryViewContainer from './entries/EntryViewContainer';
 
 import UserListNonAdmin from'./user/UserListNonAdmin.js';
 import UserFavoriteList from'./user/UserFavoriteList.js';
+import UserFavoriteListSearch from'./user/UserFavoriteListSearch.js';
+
+
+
 
 
 import Home from './home/Home.js';
@@ -34,10 +39,7 @@ class App extends Component {
     }
 
     componentDidMount() {
-      let jwtToken = localStorage.jwtToken;
-        socket.emit('loggedIn', {
-            token: jwtToken                    
-        });    
+   
       }
     
 
@@ -55,13 +57,15 @@ class App extends Component {
                 <AuthorizationErrorPage />
             )}> 
             </Route> 
-            <Route path="/signup" component={SignupForm} />
-            <Route path="/login" render={(props) => (<LoginForm {...props} />)} />
-            <Route exact path="/structures/" component={StructureListNonAdmin} />
-            <Route exact path="/structures/:structureSlug/favorites" component={UserFavoriteList} />
-            <Route path="/users" component={UserListNonAdmin} />
-            <Route exact path="/structures/:structureSlug/list" component={StructureEntriesNonAdmin} />
-            <Route path="/structures/:structureSlug/list/:entrySlug" component={EntryViewContainer} />
+              <Route path="/signup" component={SignupForm} />
+              <Route path="/login" render={(props) => (<LoginForm {...props} />)} />
+              <Route exact path="/structures/" component={StructureListNonAdmin} />
+              <Route exact path="/structures/:structureSlug/favorites" component={UserFavoriteList} />
+              <Route path="/:structure/favorites" component={UserFavoriteListSearch} />       
+              <Route path="/users" component={UserListNonAdmin} />
+              <Route exact path="/structures/:structureSlug/list" component={StructureEntriesNonAdmin} />
+              <Route path="/structures/:structureSlug/list/:entrySlug" component={EntryViewContainer} />
+              <Route path="/:structure/list" component={StructureEntriesListNonAdminSearch} />        
           </div> 
         </Router>
       </div>

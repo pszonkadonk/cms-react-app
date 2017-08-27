@@ -10,9 +10,8 @@ const structures = require('./data/structures');
 const mongoCollections = require("./config/mongoCollections");
 const dbConnection = require("./config/mongoConnection");
 const allUsers = mongoCollections.users;
+const allStructures = mongoCollections.structures;
 const uuid = require('uuid');
-
-
 
 
 bluebird.promisifyAll(redis.RedisClient.prototype);
@@ -348,26 +347,6 @@ redisConnection.on("structure-entries:get:*", (message, channel) => {
                 });  
             }
         });            
-        // structures.removeStructure(deleteSlug, deleteName).then((response) => {
-        //     if(response === null) {
-        //         let logMessage = "Structure and Entries Removed";
-        //         redisConnection.emit(successEvent, {
-        //             requestId: requestId,
-        //             data: logMessage,
-        //             eventName: eventName
-        //         });
-        //     } else {
-        //         let warning = "Could not remove structure";
-        //         redisConnection.emit(failedEvent, {
-        //             requestId: requestId,
-        //             data: warning,
-        //             eventName: eventName
-        //         });
-        //     }
-        // })
-        // .catch((err) => { 
-        //     console.log(err);
-        // });
     });
 
 
@@ -811,17 +790,12 @@ redisConnection.on("update-entry:put:*", (message, channel) => {
     
         let structureSlug = message.data.structureSlug;
 
+        let userWithFilteredFavs = [];
         users.getAllUsers().then((userCollection) => {
-            let userWithFilteredFavs = [];
             userCollection.filter((element) => {
                 let filteredFavs = []                      
-                console.log("ELEMENT FAVORITES");
-                console.log(element.favorites);
-                
                 for(let i = 0; i < element.favorites.length; i++) {
-
                     if(element.favorites[i].structureSlug === structureSlug) {
-                        console.log('appending');
                         filteredFavs.push(element.favorites[i]);
                     }
                 }
@@ -844,3 +818,68 @@ redisConnection.on("update-entry:put:*", (message, channel) => {
         });
     });
 
+
+
+
+    redisConnection.on("structure-entries-search:get:*", (message, channel) => {
+        
+        let requestId = message.requestId;
+        let eventName = message.eventName;
+
+        let successEvent = `${eventName}:success:${requestId}`;
+        let failedEvent = `${eventName}:failed:${requestId}`;
+
+        console.log("You have reached structure-entries-search:get");
+
+        console.log("MESSAGE");
+        console.log(message.data);
+
+    
+        let structureSlug = message.data.slug;
+        let entryRepository = `${structureSlug}-entries`;
+        let pageNumber = message.data.pageNumber;
+
+        
+        return allStructures().then((structureCollection) => {
+            structureCollection.findOne({slug: structureSlug}, (err, structure) => {
+
+                if(!structure) {
+                    throw("No such structure");
+                }
+
+                console.log("STRUCTURE");
+
+                console.log(structure);
+                let pageSize = structure.pageSize;
+
+                dbConnection().then(db => {
+                    if(db !== "undefined") { 
+                        db.collection(entryRepository).find({})
+                            .skip(20*(pageNumber-1)).limit(20).toArray((err, response) => {
+                                if(err) {
+                                    let warning = "Could not get structure entry collection";
+                                    redisConnection.emit(failedEvent, {
+                                        requestId: requestId,
+                                        data: warning,
+                                        eventName: eventName
+                                    });
+                                }
+                                redisConnection.emit(successEvent, {
+                                    requestId: requestId,
+                                    data: response,
+                                    eventName: eventName
+                                });
+                        });
+                    }
+                    else {
+                        let warning = "Could not get structure entry collection";
+                        redisConnection.emit(failedEvent, {
+                            requestId: requestId,
+                            data: warning,
+                            eventName: eventName
+                        });  
+                    }
+                });
+            });
+        });
+    });
